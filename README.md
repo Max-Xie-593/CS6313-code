@@ -4,8 +4,6 @@ npm install -g express-generator
 # To Create the Folder I used (do not repeat)
 express Vidzy
 
-# Go to Vidzy Directory
-cd Vidzy
 # Install nodemon Monk & ejs (monk and ejs should be installed with npm install)
 npm install
 npm install nodemon -g
