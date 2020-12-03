@@ -44,21 +44,6 @@ var db = mysql.createConnection({
 //     });
 // });
 
-router.post('/new/user', function(req, res){
-  if (req.body.PASSWORD.normalize() !== req.body.PASSWORD_check.normalize()) {
-    res.render('signup');
-  }
-  // console.log(req.body);
-
-  db.connect(function(err) {
-       if (err) throw err;
-       db.query("SELECT username FROM credential", function (err, result) {
-         if (err) throw err;
-         console.log("Result: ");
-         console.log(result);
-       });
-   });
-});
 
 
 module.exports = router;
