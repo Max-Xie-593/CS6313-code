@@ -1,8 +1,9 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const crypto = require('crypto');
 
-var mysql = require('mysql');
-var db = mysql.createConnection({
+const mysql = require('mysql');
+const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "root",
@@ -46,18 +47,55 @@ router.get('/checkout', function(req, res) {
 // Database {{{
 router.post('/new/user', function(req, res) {
   if (req.body.PASSWORD.normalize() !== req.body.PASSWORD_check.normalize()) {
-    res.redirect('/signup');
-    return;
+    throw "Passwords do not match!";
+    // res.redirect('/signup');
+    // return;
   }
 
+  // db.connect(function(err) {
+  //   if (err) throw err;
+  //   var sql = "INSERT INTO user SET ?";
+  //   db.query(sql, {"first_name" : req.body.first_name, "last_name" : req.body.last_name}, function (err, result) {
+  //     if (err) throw err;
+  //     console.log("INSERT YAY");
+  //     console.log(result.insertId);
+  //   });
+  // });
+
   db.connect(function(err) {
-       if (err) throw err;
-       db.query("SELECT username FROM credential", function (err, result) {
-         if (err) throw err;
-         console.log("Result: ");
-         console.log(result);
-       });
-   });
+    if (err) throw err;
+
+    const hash_string = (str) => crypto.createHash('sha512').update(str.normalize()).digest('hex');
+
+    const username_hash = hash_string(req.body.username);
+    db.query(
+      "SELECT username FROM credential WHERE username='" + username_hash + "'",
+      function (err, result) {
+        if (err) throw err;
+
+        if (result.length != 0) {
+          throw "Username already exists!"
+        }
+
+        var user_insert_sql = "INSERT INTO user "
+          + "(first_name, last_name) VALUES ('"
+          + req.body.first_name + "', '"
+          + req.body.last_name +"')";
+        db.query(user_insert_sql, function (err, result) {
+          if (err) throw err;
+
+          var credential_insert_sql = "INSERT INTO credential "
+            + "(username, user_id, PASSWORD) VALUES ('"
+            + username_hash + "', '"
+            + result.insertId + "', '"
+            + hash_string(req.body.PASSWORD) + "')";
+          db.query(credential_insert_sql, function (err) { if (err) throw err; });
+        });
+      }
+    );
+  });
+
+  res.redirect('/');
 });
 // Database }}}
 
