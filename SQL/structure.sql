@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 04, 2020 at 09:35 PM
+-- Generation Time: Dec 04, 2020 at 11:47 PM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
@@ -29,6 +29,7 @@ USE `boardgame_shop`;
 -- Table structure for table `admin`
 --
 
+DROP TABLE IF EXISTS `admin`;
 CREATE TABLE `admin` (
   `user_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -45,6 +46,7 @@ CREATE TABLE `admin` (
 -- Table structure for table `credential`
 --
 
+DROP TABLE IF EXISTS `credential`;
 CREATE TABLE `credential` (
   `username` varchar(128) NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL,
@@ -63,6 +65,7 @@ CREATE TABLE `credential` (
 -- Table structure for table `item_purchase`
 --
 
+DROP TABLE IF EXISTS `item_purchase`;
 CREATE TABLE `item_purchase` (
   `product_id` int(10) UNSIGNED NOT NULL,
   `purchase_id` int(10) UNSIGNED NOT NULL,
@@ -83,11 +86,13 @@ CREATE TABLE `item_purchase` (
 -- Table structure for table `product`
 --
 
+DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `id` int(10) UNSIGNED NOT NULL,
-  `description` text NOT NULL,
+  `name` text NOT NULL,
+  `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'Price in US Cents',
   `image_path` text NOT NULL,
-  `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'Price in US Cents'
+  `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -108,6 +113,7 @@ CREATE TABLE `product` (
 -- Table structure for table `purchase`
 --
 
+DROP TABLE IF EXISTS `purchase`;
 CREATE TABLE `purchase` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL,
@@ -126,6 +132,7 @@ CREATE TABLE `purchase` (
 -- Table structure for table `user`
 --
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(10) UNSIGNED NOT NULL,
   `first_name` varchar(10) NOT NULL,
@@ -182,6 +189,12 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `product`
+--
+ALTER TABLE `product`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `purchase`
