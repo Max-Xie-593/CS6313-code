@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
+const { body, validationResult } = require('express-validator');
 
 const session = require('express-session');
 
@@ -67,45 +68,66 @@ router.get('/new/item', function(req, res) {
   });
 });
 
-/* GET new Item Page. */
-router.post('/new/item', function(req, res) {
 
-  if (!req.session.user_info) {
-    return res.render('newitem', {error_message: "Not Signed in!"});
-  }
+// Add New Item to Database {{{
+router.post('/new/item',
+  [
+    body("item_name")
+    .not().isEmpty()
+    .trim()
+    .escape(),
 
-  is_admin(req.session.user_info.id, function(err, result) {
-    if (err) throw err;
+    body("item_price")
+    .not().isEmpty()
+    .trim()
+    .escape()
+    .isFloat().toFloat(),
 
-    if (!result) {
-      return res.render('newitem', {
-        error_message: "Not Admin!",
-        first_name : req.session.user_info.first_name,
-        last_name: req.session.user_info.first_name,
-        admin : false
-      });
+    body("item_img")
+    .not().isEmpty()
+    .trim()
+    .escape(),
+
+    body("item_description")
+    .not().isEmpty()
+    .trim()
+    .escape()
+  ],
+  function(req, res) {
+    if (!req.session.user_info) {
+      return res.redirect('/');
     }
 
-    // Do processing here
-    // Check if item info is valid
-    // Add item to DB
-    // req.body.item_name
-    // req.body.item_price
-    // req.body.item_img
-    // req.body.item_description
-    if (req.body.item_name == null || req.body.item_name == "" || req.body.item_price == null || req.body.item_price == "" ||
-    req.body.item_img == null || req.body.item_img == "" || req.body.item_description == null || req.body.item_description == "") {
+    if (!validationResult(req).isEmpty()) {
       return res.render('newitem', {
-        error_message: "Please Enter all Fields",
+        error_message: "Invalid Input Given!",
         first_name : req.session.user_info.first_name,
         last_name: req.session.user_info.first_name,
         admin : result
       });
     }
-    console.log("price is:" + req.body.item_price * 100);
-    return res.redirect('/');
-  });
-});
+
+    is_admin(req.session.user_info.id, function(err, result) {
+      if (err) throw err;
+
+       if (!result) {
+         return res.redirect('/');
+       }
+
+      sql_pool.query("INSERT INTO product "
+        + "(name, cents_price, image_path, description) VALUES ("
+          + `'${req.body.item_name}', `
+          + `'${req.body.item_price * 100}', `
+          + `'${req.body.item_img}', `
+          + `'${req.body.item_description}'`
+        + ')'
+      );
+
+      return res.redirect('/');
+    });
+  }
+);
+// Add New Item to Database }}}
 
 router.get('/signin', function(req, res) {
 
