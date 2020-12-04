@@ -69,13 +69,12 @@ router.post('/new/item', function(req, res) {
     if (err) throw err;
     if (result.length !== 0){
       // Do processing here
-      /*
-      res.render('newitem', {
-        first_name : req.session.user_info.first_name,
-        last_name: req.session.user_info.first_name,
-        admin : result.length !== 0
-      });
-      */
+      // Check if item info is valid
+      // Add item to DB
+      // req.body.item_name
+      // req.body.item_price
+      // req.body.item_img
+      // req.body.item_description
       return res.redirect('/');
     } else {
       return res.render('newitem', {

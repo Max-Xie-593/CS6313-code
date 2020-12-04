@@ -4,34 +4,46 @@
     <h1 class="display-4">Home Page</h1>
 </div>
 
-<div class="row">
-    <% if(typeof admin !== 'undefined' && admin === true){ %>
-    <div class="col-sm-auto">
-        <div class="card h-100" style="width: 18rem;">
-            <img class="card-img-top" src="/images/new_item.png" alt="New Item">
-            <div class="card-body">
-                <h5 class="card-title">Add New Item</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="/new/item" class="btn btn-primary">Add</a>
+<div class="row justify-content-between no-gutters">
+    <div id="sidebarMenu" class="bg-second col-1 d-md-block sidebar collapse bg-second" style="background-color:rgb(240, 240, 240)">
+        <br>
+        <h5>Select</h5>
+        <ul class="nav flex-column">
+        </ul>
+    </div>
+    <main>
+        <div class="row">
+            <% if(typeof admin !== 'undefined' && admin === true){ %>
+            <div class="col-sm-auto">
+                <div class="card h-100" style="width: 18rem;">
+                    <img class="card-img-top" src="/images/new_item.png" alt="New Item">
+                    <div class="card-body">
+                        <h5 class="card-title">Add New Item</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="/new/item" class="btn btn-primary">Add</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-{breakpoint}-auto">
+            <% } else {%>
+            <div class="col-sm-auto">
+            <% } %>
+                <div class="card h-100" style="width: 18rem;">
+                    <img class="card-img-top" src="/images/catan.jpg" alt="New Item">
+                    <div class="card-body">
+                        <h5 class="card-title">Catan</h5>
+                        <p class="card-text">A game about feeling mad</p>
+                        <a href="/new/item" class="btn btn-primary">Add</a>
+                        <% if(typeof admin !== 'undefined' && admin === true){ %>
+                            <a href="/new/item" class="btn btn-warning">update</a>
+                            <a href="/new/item" class="btn btn-danger">delete</a>
+                        <% } %>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <% } %>
-    <div class="col-{breakpoint}-auto">
-        <div class="card h-100" style="width: 18rem;">
-            <img class="card-img-top" src="/images/catan.jpg" alt="New Item">
-            <div class="card-body">
-                <h5 class="card-title">Catan</h5>
-                <p class="card-text">A game about feeling mad</p>
-                <a href="/new/item" class="btn btn-primary">Add</a>
-                <% if(typeof admin !== 'undefined' && admin === true){ %>
-                    <a href="/new/item" class="btn btn-warning">update</a>
-                    <a href="/new/item" class="btn btn-danger">delete</a>
-                <% } %>
-            </div>
-        </div>
-    </div>
+    </main>
+    <div id="sidebarMenu2" class="bg-second col-1 d-md-block sidebar collapse bg-second justify-content-end" style="background-color:rgb(240, 240, 240)"></div>
 </div>
-
 
 <%- include('partials/footer') %>
