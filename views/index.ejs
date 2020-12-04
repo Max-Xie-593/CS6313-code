@@ -1,18 +1,16 @@
 <%- include('partials/header') %>
 
-<div class="jumbotron">
-    <h1 class="display-4">Home Page</h1>
-</div>
-
 <div class="row justify-content-between no-gutters">
     <div id="sidebarMenu" class="bg-second col-1 d-md-block sidebar collapse bg-second" style="background-color:rgb(240, 240, 240)">
-        <br>
-        <h5>Select</h5>
-        <ul class="nav flex-column">
-        </ul>
+        <div class="col-md-12">
+            <br>
+            <h5>Select</h5>
+            <ul class="nav flex-column">
+            </ul>
+        </div>
     </div>
-    <main>
-        <div class="row">
+    <main class="col-10">
+        <div class="row col-md-12">
             <% if(typeof admin !== 'undefined' && admin === true){ %>
             <div class="col-sm-auto">
                 <div class="card h-100" style="width: 18rem;">
@@ -24,10 +22,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-{breakpoint}-auto">
-            <% } else {%>
-            <div class="col-sm-auto">
             <% } %>
+            <div class="col-sm-auto">
                 <div class="card h-100" style="width: 18rem;">
                     <img class="card-img-top" src="/images/catan.jpg" alt="New Item">
                     <div class="card-body">

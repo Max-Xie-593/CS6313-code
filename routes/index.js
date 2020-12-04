@@ -75,6 +75,7 @@ router.post('/new/item', function(req, res) {
       // req.body.item_price
       // req.body.item_img
       // req.body.item_description
+      console.log("price is:" + req.body.item_price)
       return res.redirect('/');
     } else {
       return res.render('newitem', {
