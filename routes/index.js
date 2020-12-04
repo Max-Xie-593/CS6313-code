@@ -93,6 +93,15 @@ router.post('/new/item', function(req, res) {
     // req.body.item_price
     // req.body.item_img
     // req.body.item_description
+    if (req.body.item_name == null || req.body.item_name == "" || req.body.item_price == null || req.body.item_price == "" ||
+    req.body.item_img == null || req.body.item_img == "" || req.body.item_description == null || req.body.item_description == "") {
+      return res.render('newitem', {
+        error_message: "Please Enter all Fields",
+        first_name : req.session.user_info.first_name,
+        last_name: req.session.user_info.first_name,
+        admin : result
+      });
+    }
     console.log("price is:" + req.body.item_price * 100);
     return res.redirect('/');
   });
