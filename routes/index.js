@@ -35,7 +35,7 @@ router.get('/', function(req, res) {
     return res.render('index');
   }
 
-  check_admin(req.session.user_info.id, function(err, result) {
+  is_admin(req.session.user_info.id, function(err, result) {
     if (err) throw err;
 
     res.render('index', {
