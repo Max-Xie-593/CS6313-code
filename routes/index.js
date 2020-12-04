@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const session = require('express-session');
 
 const mysql = require('mysql');
+const { brotliDecompress } = require('zlib');
 var sql_pool  = mysql.createPool({
   connectionLimit : 10,
   host            : 'localhost',
@@ -18,41 +19,86 @@ const hash_string = (str) => crypto.createHash('sha512').update(str.normalize())
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index');
+
+  if (!req.session.user_info) {
+    return res.render('index');
+  }
+
+  const admin_select_sql = "SELECT user_id FROM admin WHERE user_id='" + req.session.user_info.id + "'"
+  sql_pool.query(admin_select_sql, function (err, result) {
+    if (err) throw err;
+    res.render('index', {
+      first_name : req.session.user_info.first_name,
+      last_name: req.session.user_info.first_name,
+      admin : result.length !== 0
+    });
+  });
+
 });
 
 router.get('/signin', function(req, res) {
-  // TODO: If a user is signed in already, replace "sign in" and "sign up" with
-  // "sign out"
+
+  if (req.session.user_info) {
+    return res.redirect('/');
+  }
+
   res.render('signin');
 });
 
 router.get('/signup', function(req, res) {
+
+  if (req.session.user_info) {
+    return res.redirect('/');
+  }
+
   res.render('signup');
 });
 
 router.get('/cart', function(req, res) {
-  // TODO: Prior to going to the cart page, check if a user is signed in. If not
-  // go to sign in page
-  res.render('cart');
+  if (!req.session.user_info) {
+    return res.redirect('/signin');
+  }
+
+  res.render('cart', {
+    first_name : req.session.user_info.first_name,
+    last_name: req.session.user_info.first_name
+  });
 });
 
 router.get('/history', function(req, res) {
-  // TODO: Prior to going to the history page, check if a user is signed in. If
-  // not go to sign in page
-  res.render('history');
+  if (!req.session.user_info) {
+    return res.redirect('/signin');
+  }
+
+  res.render('history', {
+    first_name : req.session.user_info.first_name,
+    last_name: req.session.user_info.first_name
+  });
 });
 
 router.get('/checkout', function(req, res) {
-  // TODO: Prior to going to the checkout page, check if a user is signed in. If
-  // not go to sign in page
-  console.log(req.session.user_info);
-  res.render('checkout');
+  if (!req.session.user_info) {
+    return res.redirect('/signin');
+  }
+
+  console.log(req.session);
+  res.render('checkout', {
+    first_name : req.session.user_info.first_name,
+    last_name: req.session.user_info.first_name
+  });
 });
 
+// Sign Out {{{
+router.get('/signout', function(req, res) {
+  req.session.destroy(function(err){
+    if (err) throw err;
+    return res.redirect('/');
+  });
+});
+// Sign Out }}}
 
 // Sign In {{{
-router.post('/signin/verify', function(req, res) {
+router.post('/signin', function(req, res) {
 
   sql_pool.getConnection(function(err, db) {
     if (err) throw err;
@@ -64,41 +110,33 @@ router.post('/signin/verify', function(req, res) {
       if (err) throw err;
 
       if (result.length != 1) {
-        // TODO: Find a way better to indicate invalid username/password pair.
-
-        res.redirect("/signin");
-        return;
+        return res.render('signin', {error_message: "Invalid User/Password Combination!"});
       }
 
       req.session.user_info = {
-        "id" : result[0].user_id
+        "id": result[0].user_id
       };
       var user_select_sql = "SELECT first_name, last_name FROM user WHERE "
-        + "id='" + req.session.user_info.id + "'";
+        + "id='" + result[0].user_id + "'";
       db.query(user_select_sql, function (err, result) {
         if (err) throw err;
 
-        // TODO: The session variable does not persist outside of this function
-        // callback. Find a way for the session variable to persist.
         req.session.user_info.first_name = result[0].first_name;
         req.session.user_info.last_name = result[0].last_name;
+        db.release();
 
+        res.redirect('/');
       });
-
     });
-    db.release();
-    res.redirect("/");
   });
 
 });
 // Sign In }}}
 
 // Sign Up {{{
-router.post('/new/user', function(req, res) {
+router.post('/signup', function(req, res) {
   if (req.body.PASSWORD.normalize() !== req.body.PASSWORD_check.normalize()) {
-    throw "Passwords do not match!";
-    // res.redirect('/signup');
-    // return;
+    return res.render('signup', {error_message: "Passwords do not match!!"});
   }
 
   sql_pool.getConnection(function(err, db) {
@@ -113,7 +151,7 @@ router.post('/new/user', function(req, res) {
         if (err) throw err;
 
         if (result.length != 0) {
-          throw "Username already exists!";
+          return res.render('signup', {error_message: "Username already exists!"});
         }
 
         user_insert_sql = "INSERT INTO user "
@@ -133,14 +171,15 @@ router.post('/new/user', function(req, res) {
 
           db.query(credential_insert_sql, function (err) {
             if (err) throw err;
+
+            db.release();
+            res.redirect(307, '/signin');
           });
         });
     });
 
-    db.release();
   });
 
-  return res.redirect('/');
 });
 // Sign Up }}}
 

@@ -15,7 +15,6 @@ app.use(session({
   secret: 'CS6314-TableTopStoreProject',
   resave: true,
   saveUninitialized: true,
-  cookie: { secure: false }
 }));
 
 // view engine setup
@@ -28,14 +27,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Create session variables if it does not already exist
-app.use((req, res, next) => {
-   // Check if we've already initialised a session
-   if (req.session.user_info === undefined) {
-      req.session.user_info = {};
-   }
-   next();
-});
 
 // Routes
 app.use('/', indexRouter);
@@ -46,9 +37,6 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// app.use(session({
-//   secret: 'CS6314-TableTopStoreProject'
-// }));
 
 // error handler
 app.use(function(err, req, res, next) {

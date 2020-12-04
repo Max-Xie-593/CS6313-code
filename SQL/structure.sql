@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 03, 2020 at 11:11 PM
+-- Generation Time: Dec 04, 2020 at 07:52 AM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
@@ -22,6 +22,23 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `boardgame_shop` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `boardgame_shop`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin`
+--
+
+DROP TABLE IF EXISTS `admin`;
+CREATE TABLE `admin` (
+  `user_id` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- RELATIONSHIPS FOR TABLE `admin`:
+--   `user_id`
+--       `user` -> `id`
+--
 
 -- --------------------------------------------------------
 
@@ -120,6 +137,12 @@ CREATE TABLE `user` (
 --
 
 --
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `credential`
 --
 ALTER TABLE `credential`
@@ -171,6 +194,12 @@ ALTER TABLE `user`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `admin`
+--
+ALTER TABLE `admin`
+  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `credential`

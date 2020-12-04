@@ -6,7 +6,14 @@
 
 
 <div class="container">
-    <form action="/new/user" method="POST">
+
+    <% if(typeof error_message !== 'undefined'){ %>
+        <div class="alert alert-danger" role="alert">
+            <%= error_message %>
+        </div>
+    <% } %>
+
+    <form action="/signup" method="POST">
         <div class="form-group">
             <label>Username</label>
             <input name="username" type="text" class="form-control">
