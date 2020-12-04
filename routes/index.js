@@ -17,6 +17,17 @@ var sql_pool  = mysql.createPool({
 
 const hash_string = (str) => crypto.createHash('sha512').update(str.normalize()).digest('hex');
 
+
+function is_admin(user_id, callback) {
+  sql_pool.query(`SELECT user_id FROM admin WHERE user_id='${user_id}'`,
+    function(err, result) {
+      if (err) throw err;
+
+      callback(null, result.length === 1);
+    }
+  )
+}
+
 /* GET home page. */
 router.get('/', function(req, res) {
 
@@ -24,16 +35,15 @@ router.get('/', function(req, res) {
     return res.render('index');
   }
 
-  const admin_select_sql = "SELECT user_id FROM admin WHERE user_id='" + req.session.user_info.id + "'"
-  sql_pool.query(admin_select_sql, function (err, result) {
+  check_admin(req.session.user_info.id, function(err, result) {
     if (err) throw err;
+
     res.render('index', {
       first_name : req.session.user_info.first_name,
       last_name: req.session.user_info.first_name,
-      admin : result.length !== 0
+      admin : result
     });
   });
-
 });
 /* GET new Item Page. */
 router.get('/new/item', function(req, res) {
@@ -42,18 +52,18 @@ router.get('/new/item', function(req, res) {
     return res.redirect('/');
   }
 
-  const admin_select_sql = "SELECT user_id FROM admin WHERE user_id='" + req.session.user_info.id + "'"
-  sql_pool.query(admin_select_sql, function (err, result) {
+  is_admin(req.session.user_info.id, function(err, result) {
     if (err) throw err;
-    if (result.length !== 0){
-      res.render('newitem', {
-        first_name : req.session.user_info.first_name,
-        last_name: req.session.user_info.first_name,
-        admin : result.length !== 0
-      });
-    } else {
+
+    if (!result) {
       return res.redirect('/');
     }
+
+    res.render('newitem', {
+      first_name : req.session.user_info.first_name,
+      last_name: req.session.user_info.first_name,
+      admin : true
+    });
   });
 });
 
@@ -64,27 +74,27 @@ router.post('/new/item', function(req, res) {
     return res.render('newitem', {error_message: "Not Signed in!"});
   }
 
-  const admin_select_sql = "SELECT user_id FROM admin WHERE user_id='" + req.session.user_info.id + "'"
-  sql_pool.query(admin_select_sql, function (err, result) {
+  is_admin(req.session.user_info.id, function(err, result) {
     if (err) throw err;
-    if (result.length !== 0){
-      // Do processing here
-      // Check if item info is valid
-      // Add item to DB
-      // req.body.item_name
-      // req.body.item_price
-      // req.body.item_img
-      // req.body.item_description
-      console.log("price is:" + req.body.item_price)
-      return res.redirect('/');
-    } else {
+
+    if (!result) {
       return res.render('newitem', {
         error_message: "Not Admin!",
         first_name : req.session.user_info.first_name,
         last_name: req.session.user_info.first_name,
-        admin : result.length !== 0
+        admin : false
       });
     }
+
+    // Do processing here
+    // Check if item info is valid
+    // Add item to DB
+    // req.body.item_name
+    // req.body.item_price
+    // req.body.item_img
+    // req.body.item_description
+    console.log("price is:" + req.body.item_price * 100);
+    return res.redirect('/');
   });
 });
 
