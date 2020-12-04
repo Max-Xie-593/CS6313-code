@@ -32,17 +32,25 @@ function is_admin(user_id, callback) {
 /* GET home page. */
 router.get('/', function(req, res) {
 
-  if (!req.session.user_info) {
-    return res.render('index');
-  }
-
-  is_admin(req.session.user_info.id, function(err, result) {
+  sql_pool.getConnection(function(err, db) {
     if (err) throw err;
 
-    res.render('index', {
-      first_name : req.session.user_info.first_name,
-      last_name: req.session.user_info.first_name,
-      admin : result
+    var credentials_select_sql = "SELECT * FROM product";
+    db.query(credentials_select_sql, function (err, result) {
+      if (err) throw err;
+      db.release();
+      if (!req.session.user_info) {
+        return res.render('index', {products : result});
+      }
+      is_admin(req.session.user_info.id, function(err, isadmin) {
+        if (err) throw err;
+        res.render('index', {
+          first_name : req.session.user_info.first_name,
+          last_name: req.session.user_info.first_name,
+          admin : isadmin,
+          products : result
+        });
+      });
     });
   });
 });
