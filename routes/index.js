@@ -35,6 +35,58 @@ router.get('/', function(req, res) {
   });
 
 });
+/* GET new Item Page. */
+router.get('/new/item', function(req, res) {
+
+  if (!req.session.user_info) {
+    return res.redirect('/');
+  }
+
+  const admin_select_sql = "SELECT user_id FROM admin WHERE user_id='" + req.session.user_info.id + "'"
+  sql_pool.query(admin_select_sql, function (err, result) {
+    if (err) throw err;
+    if (result.length !== 0){
+      res.render('newitem', {
+        first_name : req.session.user_info.first_name,
+        last_name: req.session.user_info.first_name,
+        admin : result.length !== 0
+      });
+    } else {
+      return res.redirect('/');
+    }
+  });
+});
+
+/* GET new Item Page. */
+router.post('/new/item', function(req, res) {
+
+  if (!req.session.user_info) {
+    return res.render('newitem', {error_message: "Not Signed in!"});
+  }
+
+  const admin_select_sql = "SELECT user_id FROM admin WHERE user_id='" + req.session.user_info.id + "'"
+  sql_pool.query(admin_select_sql, function (err, result) {
+    if (err) throw err;
+    if (result.length !== 0){
+      // Do processing here
+      /*
+      res.render('newitem', {
+        first_name : req.session.user_info.first_name,
+        last_name: req.session.user_info.first_name,
+        admin : result.length !== 0
+      });
+      */
+      return res.redirect('/');
+    } else {
+      return res.render('newitem', {
+        error_message: "Not Admin!",
+        first_name : req.session.user_info.first_name,
+        last_name: req.session.user_info.first_name,
+        admin : result.length !== 0
+      });
+    }
+  });
+});
 
 router.get('/signin', function(req, res) {
 
