@@ -82,45 +82,48 @@ router.post('/new/item',
   [
     body("item_name")
     .not().isEmpty()
-    .trim()
-    .escape(),
+    .withMessage("Item Name cannot be empty.")
+    .trim(),
 
     body("item_price")
     .not().isEmpty()
+    .withMessage("Item Price cannot be empty.")
     .trim()
     .escape()
     .isFloat().toFloat(),
 
     body("item_img")
     .not().isEmpty()
+    .withMessage("Item Image Path cannot be empty.")
     .trim()
     .escape(),
 
     body("item_description")
     .not().isEmpty()
+    .withMessage("Item Description cannot be empty.")
     .trim()
-    .escape()
   ],
   function(req, res) {
     if (!req.session.user_info) {
       return res.redirect('/');
     }
 
-    if (!validationResult(req).isEmpty()) {
-      return res.render('newitem', {
-        error_message: "Invalid Input Given!",
-        first_name : req.session.user_info.first_name,
-        last_name: req.session.user_info.first_name,
-        admin : result
-      });
-    }
-
     is_admin(req.session.user_info.id, function(err, result) {
       if (err) throw err;
 
-       if (!result) {
-         return res.redirect('/');
-       }
+      if (!result) {
+        return res.redirect('/');
+      }
+
+      if (!validationResult(req).isEmpty()) {
+        return res.render('newitem', {
+          error_message: validationResult(req).errors.map(item => item.msg),
+          first_name : req.session.user_info.first_name,
+          last_name: req.session.user_info.first_name,
+          admin : result
+        });
+      }
+
 
       sql_pool.query("INSERT INTO product "
         + "(name, cents_price, image_path, description) VALUES ("
