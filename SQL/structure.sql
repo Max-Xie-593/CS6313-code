@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 05, 2020 at 10:42 PM
+-- Generation Time: Dec 05, 2020 at 10:59 PM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
@@ -64,7 +64,7 @@ CREATE TABLE `item_purchase` (
   `product_id` int(10) UNSIGNED NOT NULL,
   `purchase_id` int(10) UNSIGNED NOT NULL,
   `quantity` int(10) UNSIGNED NOT NULL CHECK (`quantity` > 0),
-  `cents_price` int(10) UNSIGNED NOT NULL COMMENT 'The price in US cents when the item was purchased.'
+  `cents_price` int(10) UNSIGNED NOT NULL COMMENT 'The price in US cents for each item when the item was purchased.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
