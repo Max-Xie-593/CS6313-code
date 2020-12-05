@@ -249,9 +249,59 @@ router.get('/history', function(req, res) {
     return res.redirect('/signin');
   }
 
-  res.render('history', {
-    first_name : req.session.user_info.first_name,
-    last_name: req.session.user_info.first_name
+  sql_pool.getConnection(function(err, db) {
+    if (err) throw err;
+
+    db.query(
+      "SELECT purchase.id, purchase.total_cents_price, purchase.purchase_date "
+      + "FROM purchase "
+      + `WHERE user_id = ${req.session.user_info.id} `
+      + "ORDER BY purchase.purchase_date DESC",
+      function(err, orders) {
+        if (err) throw err;
+
+        if (!orders.length) {
+          return res.render('history');
+        }
+
+
+        var user_item_purchases_sql =
+          "SELECT "
+            + "item_purchase.*,"
+            + "product.name,"
+            + "product.cents_price,"
+            + "product.image_path,"
+            + "product.description,"
+            + "product.genre"
+          + " FROM "
+            + "item_purchase,product,purchase "
+          + "WHERE "
+            + "item_purchase.product_id=product.id "
+            + "AND item_purchase.purchase_id=purchase.id "
+            + `AND purchase.user_id = ${req.session.user_info.id}`;
+
+        db.query(user_item_purchases_sql, function(err, items_purchased) {
+          if (err) throw err;
+
+          order_items = {}
+          for (let item_purchased of items_purchased) {
+            if (!(item_purchased.purchase_id in order_items)) {
+              order_items[item_purchased.purchase_id] = [];
+            }
+            order_items[item_purchased.purchase_id].push({
+              "name" : item_purchased.name,
+              "cents_price" : item_purchased.cents_price,
+              "cents_price" : item_purchased.cents_price,
+              "image_path" : item_purchased.image_path,
+              "description" : item_purchased.description,
+              "quantity" : item_purchased.quantity
+            });
+          }
+
+          return res.render('history', {orders: orders, order_items: order_items});
+        })
+
+    });
   });
 });
 
