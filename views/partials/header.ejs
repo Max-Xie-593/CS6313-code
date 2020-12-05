@@ -9,9 +9,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <!-- FontAwesome icons -->
         <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-        <% if (typeof genre !=='undefined'){ %>
-        <script>$(document).ready(function(){document.getElementById("Genre").value="<%= genre %>";});</script>
-        <% } %>
     </head>
     <body>
 
@@ -26,19 +23,11 @@
             <!-- Toggle Nav Bar (opens if page is too small) -->
             <div class="collapse navbar-collapse" id="navbar">
               <!-- Search Bar -->
-              <form class="mx-2 my-auto d-inline w-100" action="/" method="GET">
-                <div class="input-group form-row">
-                    <input name="search" type="text" class="col-11 form-control border border-right-0" placeholder="Search..." <% if (typeof search !=='undefined'){ %>value="<%= search %>"<% } %> >
-                    <div class="input-group-prepend">
-                      <label class="input-group-text" for="inputGroupSelect01">Genres</label>
-                    </div>
-                    <select class="custom-select col-1" name="genre" id="Genre" >
-                      <option value="none">None</option>
-                      <option value="family">Family</option>
-                      <option value="rollplay">Rollplay</option>
-                    </select>
+              <form class="mx-2 my-auto d-inline w-100">
+                <div class="input-group">
+                    <input type="text" class="form-control border border-right-0" placeholder="Search...">
                     <span class="input-group-append">
-                        <button class="btn btn-outline-secondary border border-left-0" type="submit">
+                        <button class="btn btn-outline-secondary border border-left-0" type="button">
                             <i class="fa fa-search"></i>
                         </button>
                     </span>
