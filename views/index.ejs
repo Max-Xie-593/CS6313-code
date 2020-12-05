@@ -1,14 +1,7 @@
 <%- include('partials/header') %>
 
 <div class="row justify-content-between no-gutters">
-    <div id="sidebarMenu" class="bg-second col-1 d-md-block sidebar collapse bg-second" style="background-color:rgb(240, 240, 240)">
-        <div class="col-md-12">
-            <br>
-            <h5>Select</h5>
-            <ul class="nav flex-column">
-            </ul>
-        </div>
-    </div>
+    <div id="sidebarMenu" class="bg-second col-1 d-md-block sidebar collapse bg-second" style="background-color:rgb(240, 240, 240)"></div>
     <main class="col-10">
         <div class="row col-md-12">
             <% if(typeof admin !== 'undefined' && admin === true){ %>
@@ -18,7 +11,9 @@
                     <div class="card-body">
                         <h5 class="card-title">Add New Item</h5>
                         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="/new/item" class="btn btn-primary">Add</a>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="/new/item" class="btn btn-primary d-flex justify-content-center">Add</a>
                     </div>
                 </div>
             </div>
@@ -31,11 +26,13 @@
                     <div class="card-body">
                         <h5 class="card-title"><%=product.name%></h5>
                         <p class="card-text"><%=product.description%></p>
+                    </div>
+                    <div class="card-footer text-center d-flex">
                         <!-- ADD Item to CART -->
-                        <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a>
+                        <a href="/new/item" class="btn btn-primary w-100 justify-content-center">$<%=product.cents_price/100%></a>
                         <% if(typeof admin !== 'undefined' && admin === true){ %>
                             <!-- Edit item /item/:id/edit -->
-                            <a href="/item/<%= product.id %>/edit" class="btn btn-warning">Edit</a>
+                            <a href="/item/<%= product.id %>/edit" class="btn btn-warning w-100 justify-content-center">Edit</a>
                         <% } %>
                     </div>
                 </div>
