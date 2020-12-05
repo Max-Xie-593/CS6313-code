@@ -38,7 +38,7 @@ router.get('/', function(req, res) {
   }/*
   if (req.query.genre != null && typeof req.query.genre !== 'undefined'){
     credentials_select_sql = credentials_select_sql + " WHERE name LIKE '" + req.query.search + "%'";
-  } 
+  }
   */
   // Add genre search
   console.log("MYSQL Search: " + credentials_select_sql);
@@ -68,31 +68,7 @@ router.get('/', function(req, res) {
     });
   });
 });
-/* GET new Item Page. */
-router.get('/new/item', function(req, res) {
 
-  sql_pool.getConnection(function(err, db) {
-    if (err) throw err;
-
-    var credentials_select_sql = "SELECT * FROM product";
-    db.query(credentials_select_sql, function (err, result) {
-      if (err) throw err;
-      db.release();
-      if (!req.session.user_info) {
-        return res.render('index', {products : result});
-      }
-      is_admin(req.session.user_info.id, function(err, isadmin) {
-        if (err) throw err;
-        res.render('index', {
-          first_name : req.session.user_info.first_name,
-          last_name: req.session.user_info.first_name,
-          admin : isadmin,
-          products : result
-        });
-      });
-    });
-  });
-});
 /* GET new Item Page. */
 router.get('/new/item', function(req, res) {
 
