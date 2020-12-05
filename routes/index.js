@@ -371,7 +371,6 @@ router.post('/signup',
         error_message: "Invalid Information Given!"}
       );
     }
-    return res.render('signup')
 
     sql_pool.getConnection(function(err, db) {
       if (err) throw err; // Unable to connect
