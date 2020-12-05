@@ -35,7 +35,7 @@
                         <!-- <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a> -->
                         <form action="/cart/<%=product.id%>" method="post" class="w-100 justify-content-center">
                             <button type="submit" class="btn btn-primary w-100 justify-content-center">
-                                $<%=product.cents_price/100%>
+                                $<%= (product.cents_price/100).toFixed(2) %>
                             </button>
                         </form>
                         <!-- If Admin, show Edit Item Field -->

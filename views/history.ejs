@@ -1,18 +1,48 @@
-<%- include('partials/header') %>
-
-<div class="jumbotron">
+<%- include('partials/header') %> <div class="jumbotron">
     <h1 class="display-4">This is the purchase history!</h1>
 </div>
 
 
 <div class="container">
-    <!-- test
-    <% if(typeof orders !== 'undefined'){ %>
-    <% } else { %>
-        <div class="alert alert-warning" role="alert">
-            No orders have been made!
+    <% if(typeof error_message !== 'undefined'){ %>
+        <div class="alert alert-danger" role="alert">
+            <% if(typeof error_message === 'string'){ %>
+                <%= error_message %>
+            <% } else if(Array.isArray(error_message)){ %>
+                <ul>
+                <% error_message.forEach(function(message){ %>
+                    <li><%= message %></li>
+                <% }) %>
+                </ul>
+            <% } %>
         </div>
+    <% } else if(typeof order_items !== 'undefined'){ %>
+        <% if(order_index > 0){ %>
+            <a class="btn btn-primary" href="/history/<%=order_index - 1%>">See Next Newest Order</a>
+        <% } %>
+
+        <p class="card-text">Order Date: <%=purchase_date%></p>
+        <p class="card-text">Total Price: $<%= (order_total_cost_cents/100).toFixed(2) %></p>
+
+        <% order_items.forEach(function(item_purchase) { %>
+            <div class="card h-100" style="width: 18rem;">
+                <img class="card-img-top" src="/images/<%=item_purchase.image_path%>" alt="Product Image">
+                <div class="card-body">
+                    <h5 class="card-title"><%=item_purchase.name%></h5>
+                    <p class="card-text"><%=item_purchase.description%></p>
+                    <p class="card-text"><%=item_purchase.genre%></p>
+                    <p class="card-text">Quantity: <%=item_purchase.quantity%></p>
+                </div>
+            </div>
+        <% }); %>
+
+        <% if(order_index < total_orders_count - 1){ %>
+            <a class="btn btn-primary" href="/history/<%=order_index + 1%>">See Next Oldest Order</a>
+        <% } %>
     <% } %>
+
+
+    <a class="btn btn-warning" href="/">Home</a>
 </div>
 
 <%- include('partials/footer') %>

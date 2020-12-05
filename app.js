@@ -8,7 +8,6 @@ var logger = require("morgan");
 var methodOveride = require("method-override");
 
 var indexRouter = require("./routes/index");
-var databaseRouter = require("./routes/database");
 
 var app = express();
 
@@ -36,7 +35,6 @@ app.use(methodOveride("_method"));
 
 // Routes
 app.use("/", indexRouter);
-app.use("/database", databaseRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -44,7 +42,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
