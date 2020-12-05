@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 05, 2020 at 06:19 AM
+-- Generation Time: Dec 05, 2020 at 10:36 PM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
@@ -63,7 +63,8 @@ DROP TABLE IF EXISTS `item_purchase`;
 CREATE TABLE `item_purchase` (
   `product_id` int(10) UNSIGNED NOT NULL,
   `purchase_id` int(10) UNSIGNED NOT NULL,
-  `quantity` int(10) UNSIGNED NOT NULL CHECK (`quantity` > 0)
+  `quantity` int(10) UNSIGNED NOT NULL CHECK (`quantity` > 0),
+  `cents_price` int(10) UNSIGNED NOT NULL COMMENT 'The price in US cents when the item was purchased.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -84,7 +85,7 @@ DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` text NOT NULL,
-  `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'Price in US Cents',
+  `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'The current price of the item in US cents.',
   `image_path` text NOT NULL,
   `description` text NOT NULL,
   `genre` varchar(20) NOT NULL
@@ -104,7 +105,6 @@ DROP TABLE IF EXISTS `purchase`;
 CREATE TABLE `purchase` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL,
-  `total_cents_price` int(10) UNSIGNED NOT NULL COMMENT 'Price in US Cents',
   `purchase_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -152,7 +152,7 @@ ALTER TABLE `credential`
 -- Indexes for table `item_purchase`
 --
 ALTER TABLE `item_purchase`
-  ADD KEY `product_id` (`product_id`),
+  ADD PRIMARY KEY (`product_id`,`purchase_id`),
   ADD KEY `purchase_id` (`purchase_id`);
 
 --
