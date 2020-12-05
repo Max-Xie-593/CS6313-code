@@ -193,14 +193,14 @@ router.post('/item/:id/',
          return res.redirect('/');
        }
 
-      sql_pool.query("UPDATE product SET " 
+      sql_pool.query("UPDATE product SET "
         + "name = " + `'${req.body.item_name}', `
         + "cents_price = " + `'${req.body.item_price * 100}', `
         + "image_path = " + `'${req.body.item_img}', `
         + "description = " + `'${req.body.item_description}' `
         + "WHERE id = " + "'" + req.params.id + "'"
       );
-      
+
 
       return res.redirect('/');
     });
