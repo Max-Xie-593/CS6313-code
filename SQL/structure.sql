@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 04, 2020 at 07:52 AM
+-- Generation Time: Dec 04, 2020 at 11:47 PM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
@@ -89,8 +89,19 @@ CREATE TABLE `item_purchase` (
 DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `id` int(10) UNSIGNED NOT NULL,
-  `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'Price in US Cents'
+  `name` text NOT NULL,
+  `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'Price in US Cents',
+  `image_path` text NOT NULL,
+  `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- MEDIA (MIME) TYPES FOR TABLE `product`:
+--   `image_path`
+--       `Text_Plain`
+--   `description`
+--       `Text_Plain`
+--
 
 --
 -- RELATIONSHIPS FOR TABLE `product`:
@@ -178,6 +189,12 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `product`
+--
+ALTER TABLE `product`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `purchase`

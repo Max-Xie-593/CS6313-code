@@ -1,9 +1,8 @@
 <%- include('partials/header') %>
 
 <div class="jumbotron">
-    <h1 class="display-4">Sign Up Page!</h1>
+    <h1 class="display-4">Add Item</h1>
 </div>
-
 
 <div class="container">
 
@@ -21,42 +20,36 @@
         </div>
     <% } %>
 
-    <form action="/signup" method="POST">
+    <form action="/new/item" method="POST">
         <div class="form-group">
-            <label>Username</label>
-            <input name="username" type="text" class="form-control">
+            <label>Product Name</label>
+            <input name="item_name" type="text" class="form-control" placeholder="Enter the name of the Product">
         </div>
 
         <div class="form-group">
-            <label>First Name</label>
-            <input name="first_name" type="text" class="form-control">
+            <label>Product Price</label>
+            <input name="item_price" type="number" step="0.01" class="form-control" placeholder="Enter the price in $">
         </div>
 
-
         <div class="form-group">
-            <label>Last Name</label>
-            <input name="last_name" type="text" class="form-control">
-        </div>
-
-
-        <div class="form-group">
-            <label>Password</label>
-            <input name="PASSWORD" type="password" class="form-control">
+            <label>Product Image</label>
+            <input name="item_img" type="text" class="form-control" placeholder="Enter image name">
         </div>
 
 
         <div class="form-group">
-            <label>Re-Enter Password</label>
-            <input name="PASSWORD_check" type="password" class="form-control">
+            <label>Product Description</label>
+            <input name="item_description" type="text" class="form-control" placeholder="Enter description">
         </div>
 
-        <button type="submit" class="btn btn-primary">Sign Up</button>
+        <button type="submit" class="btn btn-primary">Add Item</button>
 
     </form>
 
     <br>
 
-    <a class="btn btn-warning" href="/signin">Sign In</a>
+    <a class="btn btn-warning" href="/">return</a>
 </div>
+
 
 <%- include('partials/footer') %>

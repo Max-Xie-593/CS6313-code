@@ -1,18 +1,49 @@
 <%- include('partials/header') %>
 
-<div class="jumbotron">
-    <h1 class="display-4">Home Page</h1>
-</div>
-
-<% if(typeof admin !== 'undefined' && admin === true){ %>
-<div class="card h-100" style="width: 18rem;">
-    <img class="card-img-top" src="/images/new_item.png" alt="New Item">
-    <div class="card-body">
-        <h5 class="card-title">Add New Item</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="btn btn-primary">Add</a>
+<div class="row justify-content-between no-gutters">
+    <div id="sidebarMenu" class="bg-second col-1 d-md-block sidebar collapse bg-second" style="background-color:rgb(240, 240, 240)">
+        <div class="col-md-12">
+            <br>
+            <h5>Select</h5>
+            <ul class="nav flex-column">
+            </ul>
+        </div>
     </div>
+    <main class="col-10">
+        <div class="row col-md-12">
+            <% if(typeof admin !== 'undefined' && admin === true){ %>
+            <div class="col-sm-auto">
+                <div class="card h-100" style="width: 18rem;">
+                    <img class="card-img-top" src="/images/new_item.png" alt="New Item">
+                    <div class="card-body">
+                        <h5 class="card-title">Add New Item</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="/new/item" class="btn btn-primary">Add</a>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            <% if(typeof products !== 'undefined'){ %>
+            <% products.forEach(function(product) { %>
+            <div class="col-sm-auto">
+                <div class="card h-100" style="width: 18rem;">
+                    <img class="card-img-top" src="/images/<%=product.image_path%>" alt="New Item">
+                    <div class="card-body">
+                        <h5 class="card-title"><%=product.name%></h5>
+                        <p class="card-text"><%=product.description%></p>
+                        <!-- ADD Item to CART -->
+                        <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a>
+                        <% if(typeof admin !== 'undefined' && admin === true){ %>
+                            <!-- Edit item /item/:id/edit -->
+                            <a href="/item/<%= product.id %>/edit" class="btn btn-warning">Edit</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <% });} %>
+        </div>
+    </main>
+    <div id="sidebarMenu2" class="bg-second col-1 d-md-block sidebar collapse bg-second justify-content-end" style="background-color:rgb(240, 240, 240)"></div>
 </div>
-<% } %>
 
 <%- include('partials/footer') %>
