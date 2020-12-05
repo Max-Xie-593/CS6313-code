@@ -86,11 +86,11 @@ router.post('/new/item',
     .trim(),
 
     body("item_price")
-    .not().isEmpty()
-    .withMessage("Item Price cannot be empty.")
     .trim()
     .escape()
-    .isFloat().toFloat(),
+    .isFloat()
+    .withMessage("Invalid Item Price.")
+    .toFloat(),
 
     body("item_img")
     .not().isEmpty()
