@@ -1,13 +1,27 @@
-<%- include('partials/header') %>
-
-<div class="jumbotron">
+<%- include('partials/header') %> <div class="jumbotron">
     <h1 class="display-4">This is the purchase history!</h1>
 </div>
 
 
 <div class="container">
-    <!-- test
     <% if(typeof orders !== 'undefined'){ %>
+        <% orders.forEach(function(order) { %>
+            <div class="card-group">
+                <p class="card-text">Order Date: <%=order.purchase_date%></p>
+                <p class="card-text">Total Price: $<%= (order.total_cents_price/100).toFixed(2) %></p>
+
+                <% order_items[order.id].forEach(function(item_purchase) { %>
+                    <div class="card h-100" style="width: 18rem;">
+                        <img class="card-img-top" src="/images/<%=item_purchase.image_path%>" alt="Product Image">
+                        <div class="card-body">
+                            <h5 class="card-title"><%=item_purchase.name%></h5>
+                            <p class="card-text"><%=item_purchase.description%></p>
+                            <p class="card-text">Quantity: <%=item_purchase.quantity%></p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% }); %>
     <% } else { %>
         <div class="alert alert-warning" role="alert">
             No orders have been made!
