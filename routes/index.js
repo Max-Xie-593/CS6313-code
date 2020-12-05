@@ -19,6 +19,7 @@ const hash_string = (str) =>
 function is_admin(user_id, callback) {
   sql_pool.query(
     `SELECT user_id FROM admin WHERE user_id='${user_id}'`,
+
     function (err, result) {
       if (err) throw err;
 
@@ -41,6 +42,7 @@ router.get("/", function (req, res) {
       }
       is_admin(req.session.user_info.id, function (err, isadmin) {
         if (err) throw err;
+
         res.render("index", {
           first_name: req.session.user_info.first_name,
           last_name: req.session.user_info.first_name,
@@ -258,6 +260,10 @@ router.get("/signup", function (req, res) {
 });
 
 router.get("/history", function (req, res) {
+  return res.redirect("/history/0");
+});
+
+router.get("/history/:index", function (req, res) {
   if (!req.session.user_info) {
     return res.redirect("/signin");
   }
@@ -266,52 +272,63 @@ router.get("/history", function (req, res) {
     if (err) throw err;
 
     db.query(
-      "SELECT purchase.id, purchase.total_cents_price, purchase.purchase_date " +
-        "FROM purchase " +
-        `WHERE user_id = ${req.session.user_info.id} ` +
-        "ORDER BY purchase.purchase_date DESC",
-      function (err, orders) {
+      "SELECT COUNT(*) as total_count FROM purchase WHERE user_id = " +
+        req.session.user_info.id,
+      function (err, num_orders) {
         if (err) throw err;
 
-        if (!orders.length) {
-          return res.render("history");
+        if (num_orders[0].total_count === 0) {
+          return res.render("history", {
+            error_message: "No orders have been made!",
+          });
         }
 
-        var user_item_purchases_sql =
-          "SELECT " +
-          "item_purchase.*," +
-          "product.name," +
-          "product.cents_price," +
-          "product.image_path," +
-          "product.description," +
-          "product.genre" +
-          " FROM " +
-          "item_purchase,product,purchase " +
-          "WHERE " +
-          "item_purchase.product_id=product.id " +
-          "AND item_purchase.purchase_id=purchase.id " +
-          `AND purchase.user_id = ${req.session.user_info.id}`;
-
-        db.query(user_item_purchases_sql, function (err, items_purchased) {
+        const select_order_sql =
+          "SELECT purchase.id, purchase.purchase_date " +
+          "FROM purchase " +
+          `WHERE user_id = ${req.session.user_info.id} ` +
+          "ORDER BY purchase.purchase_date DESC " +
+          `LIMIT ${req.params.index}, 1`;
+        db.query(select_order_sql, function (err, order) {
           if (err) throw err;
 
-          var order_items = {};
-          for (let item_purchased of items_purchased) {
-            if (!(item_purchased.purchase_id in order_items)) {
-              order_items[item_purchased.purchase_id] = [];
-            }
-            order_items[item_purchased.purchase_id].push({
-              name: item_purchased.name,
-              cents_price: item_purchased.cents_price,
-              image_path: item_purchased.image_path,
-              description: item_purchased.description,
-              quantity: item_purchased.quantity,
+          if (order.length === 0) {
+            return res.render("history", {
+              error_message: "Order does not exist!",
             });
           }
 
-          return res.render("history", {
-            orders: orders,
-            order_items: order_items,
+          var user_item_purchases_sql =
+            "SELECT " +
+            "product.name," +
+            "product.description," +
+            "product.genre," +
+            "product.image_path," +
+            "item_purchase.quantity," +
+            "item_purchase.cents_price " +
+            "FROM item_purchase, product, purchase " +
+            "WHERE item_purchase.product_id = product.id " +
+            `AND item_purchase.purchase_id=${order[0].id} ` +
+            `AND purchase.id = ${order[0].id} ` +
+            `AND purchase.user_id = ${req.session.user_info.id}`;
+
+          db.query(user_item_purchases_sql, function (err, order_items) {
+            if (err) throw err;
+
+            var total_cost_cents = 0;
+            order_items.forEach(
+              (item_purchase) =>
+                (total_cost_cents +=
+                  item_purchase.cents_price * item_purchase.quantity)
+            );
+
+            return res.render("history", {
+              order_index: Number(req.params.index),
+              total_orders_count: Number(num_orders[0].total_count),
+              purchase_date: order[0].purchase_date,
+              order_total_cost_cents: Number(total_cost_cents),
+              order_items: order_items,
+            });
           });
         });
       }
@@ -351,12 +368,19 @@ router.get("/cart", function (req, res) {
 
   cart_select_sql += ids_string.slice(0, -1) + ")";
 
-  sql_pool.query(cart_select_sql, function (err, result) {
+  sql_pool.query(cart_select_sql, function (err, products) {
     if (err) throw err;
 
+    var total_cost_cents = 0;
+    products.forEach(
+      (product) =>
+        (total_cost_cents += product.cents_price * req.session.cart[product.id])
+    );
+
     return res.render("cart", {
-      products: result,
+      products: products,
       quantities: req.session.cart,
+      total_cost_cents: total_cost_cents,
     });
   });
 });
@@ -381,31 +405,23 @@ router.post("/checkout", function (req, res) {
     db.query(cart_select_sql, function (err, rows) {
       if (err) throw err;
 
-      var total_cost_cents = 0;
-      rows.forEach(
-        (product) =>
-          (total_cost_cents +=
-            product.cents_price * req.session.cart[product.id])
-      );
-
       db.query(
-        "INSERT INTO purchase " +
-          "(user_id, total_cents_price) VALUES (" +
-          `'${req.session.user_info.id}', ` +
-          `'${total_cost_cents}'` +
-          ")",
+        "INSERT INTO purchase (user_id) VALUES (" +
+          `'${req.session.user_info.id}')`,
         function (err, result) {
           if (err) throw err;
 
           var item_purchase_insert_template =
             "INSERT INTO item_purchase " +
-            `(purchase_id, product_id, quantity) VALUES (${result.insertId}, ?, ?)`;
+            "(purchase_id, product_id, quantity, cents_price) VALUES " +
+            `(${result.insertId}, ?, ?, ?)`;
 
           rows.forEach((product) =>
             db.query(
               mysql.format(item_purchase_insert_template, [
                 product.id,
                 req.session.cart[product.id],
+                product.cents_price,
               ]),
               function (err) {
                 if (err) throw err;

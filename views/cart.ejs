@@ -20,6 +20,10 @@
             </div>
         <% }); %>
 
+        <button class="btn btn-primary">
+            Total Cost: $<%= (total_cost_cents/100).toFixed(2)%>
+        </button>
+
         <form action="/checkout/" method="post">
             <button type="submit" class="btn btn-primary">
                 Checkout
