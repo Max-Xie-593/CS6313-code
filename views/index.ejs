@@ -28,8 +28,17 @@
                         <p class="card-text"><%=product.description%></p>
                     </div>
                     <div class="card-footer text-center d-flex">
+                        Genre: <%=product.genre%>
+                    </div>
+                    <div class="card-footer text-center d-flex">
                         <!-- ADD Item to CART -->
-                        <a href="/new/item" class="btn btn-primary w-100 justify-content-center">$<%=product.cents_price/100%></a>
+                        <!-- <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a> -->
+                        <form action="/cart/<%=product.id%>" method="post" class="w-100 justify-content-center">
+                            <button type="submit" class="btn btn-primary w-100 justify-content-center">
+                                $<%=product.cents_price/100%>
+                            </button>
+                        </form>
+                        <!-- If Admin, show Edit Item Field -->
                         <% if(typeof admin !== 'undefined' && admin === true){ %>
                             <!-- Edit item /item/:id/edit -->
                             <a href="/item/<%= product.id %>/edit" class="btn btn-warning w-100 justify-content-center">Edit</a>
