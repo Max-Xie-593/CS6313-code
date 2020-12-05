@@ -313,68 +313,60 @@ router.get("/history/:index", function (req, res) {
   sql_pool.getConnection(function (err, db) {
     if (err) throw err;
 
-    db.query(
-      "SELECT COUNT(*) as total_count FROM purchase WHERE user_id = " +
-        req.session.user_info.id,
-      function (err, num_orders) {
-        if (err) throw err;
+    if (req.session.user_info.num_orders === 0) {
+      return res.render("history", {
+        error_message: "No orders have been made!",
+      });
+    }
 
-        if (num_orders[0].total_count === 0) {
-          return res.render("history", {
-            error_message: "No orders have been made!",
-          });
-        }
+    const select_order_sql =
+      "SELECT purchase.id, purchase.purchase_date " +
+      "FROM purchase " +
+      `WHERE user_id = ${req.session.user_info.id} ` +
+      "ORDER BY purchase.purchase_date DESC " +
+      `LIMIT ${req.params.index}, 1`;
+    db.query(select_order_sql, function (err, order) {
+      if (err) throw err;
 
-        const select_order_sql =
-          "SELECT purchase.id, purchase.purchase_date " +
-          "FROM purchase " +
-          `WHERE user_id = ${req.session.user_info.id} ` +
-          "ORDER BY purchase.purchase_date DESC " +
-          `LIMIT ${req.params.index}, 1`;
-        db.query(select_order_sql, function (err, order) {
-          if (err) throw err;
-
-          if (order.length === 0) {
-            return res.render("history", {
-              error_message: "Order does not exist!",
-            });
-          }
-
-          var user_item_purchases_sql =
-            "SELECT " +
-            "product.name," +
-            "product.description," +
-            "product.genre," +
-            "product.image_path," +
-            "item_purchase.quantity," +
-            "item_purchase.cents_price " +
-            "FROM item_purchase, product, purchase " +
-            "WHERE item_purchase.product_id = product.id " +
-            `AND item_purchase.purchase_id=${order[0].id} ` +
-            `AND purchase.id = ${order[0].id} ` +
-            `AND purchase.user_id = ${req.session.user_info.id}`;
-
-          db.query(user_item_purchases_sql, function (err, order_items) {
-            if (err) throw err;
-
-            var total_cost_cents = 0;
-            order_items.forEach(
-              (item_purchase) =>
-                (total_cost_cents +=
-                  item_purchase.cents_price * item_purchase.quantity)
-            );
-
-            return res.render("history", {
-              order_index: Number(req.params.index),
-              total_orders_count: Number(num_orders[0].total_count),
-              purchase_date: order[0].purchase_date,
-              order_total_cost_cents: Number(total_cost_cents),
-              order_items: order_items,
-            });
-          });
+      if (order.length === 0) {
+        return res.render("history", {
+          error_message: "Order does not exist!",
         });
       }
-    );
+
+      var user_item_purchases_sql =
+        "SELECT " +
+        "product.name," +
+        "product.description," +
+        "product.genre," +
+        "product.image_path," +
+        "item_purchase.quantity," +
+        "item_purchase.cents_price " +
+        "FROM item_purchase, product, purchase " +
+        "WHERE item_purchase.product_id = product.id " +
+        `AND item_purchase.purchase_id=${order[0].id} ` +
+        `AND purchase.id = ${order[0].id} ` +
+        `AND purchase.user_id = ${req.session.user_info.id}`;
+
+      db.query(user_item_purchases_sql, function (err, order_items) {
+        if (err) throw err;
+
+        var total_cost_cents = 0;
+        order_items.forEach(
+          (item_purchase) =>
+            (total_cost_cents +=
+              item_purchase.cents_price * item_purchase.quantity)
+        );
+
+        return res.render("history", {
+          order_index: Number(req.params.index),
+          total_orders_count: req.session.user_info.num_orders,
+          purchase_date: order[0].purchase_date,
+          order_total_cost_cents: Number(total_cost_cents),
+          order_items: order_items,
+        });
+      });
+    });
   });
 });
 
@@ -550,15 +542,16 @@ router.post(
           id: result[0].user_id,
         };
         var user_select_sql =
-          "SELECT first_name, last_name FROM user WHERE " +
-          "id='" +
-          result[0].user_id +
-          "'";
+          "SELECT first_name, last_name, COUNT(purchase.id) as num_orders " +
+          "FROM user, purchase WHERE user.id = purchase.user_id AND " +
+          `user.id=${result[0].user_id}`;
         db.query(user_select_sql, function (err, result) {
           if (err) throw err;
 
+          console.log(user_select_sql);
           req.session.user_info.first_name = result[0].first_name;
           req.session.user_info.last_name = result[0].last_name;
+          req.session.user_info.num_orders = result[0].num_orders;
           req.session.cart = {};
           db.release();
 
