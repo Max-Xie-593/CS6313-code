@@ -32,7 +32,13 @@
                         <h5 class="card-title"><%=product.name%></h5>
                         <p class="card-text"><%=product.description%></p>
                         <!-- ADD Item to CART -->
-                        <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a>
+                        <!-- <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a> -->
+                        <form action="/cart/<%=product.id%>" method="post">
+                            <button type="submit" class="btn btn-primary">
+                                $<%=product.cents_price/100%>
+                            </button>
+                        </form>
+                        <!-- If Admin, show Edit Item Field -->
                         <% if(typeof admin !== 'undefined' && admin === true){ %>
                             <!-- Edit item /item/:id/edit -->
                             <a href="/item/<%= product.id %>/edit" class="btn btn-warning">Edit</a>

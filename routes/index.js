@@ -243,16 +243,6 @@ router.get('/signup', function(req, res) {
   res.render('signup');
 });
 
-router.get('/cart', function(req, res) {
-  if (!req.session.user_info) {
-    return res.redirect('/signin');
-  }
-
-  res.render('cart', {
-    first_name : req.session.user_info.first_name,
-    last_name: req.session.user_info.first_name
-  });
-});
 
 router.get('/history', function(req, res) {
   if (!req.session.user_info) {
@@ -265,6 +255,105 @@ router.get('/history', function(req, res) {
   });
 });
 
+// Add Items to Cart {{{
+router.post('/cart/:id', function(req, res) {
+  if (!req.session.user_info) {
+    return res.redirect('/signin');
+  }
+
+  if (req.params.id in req.session.cart) {
+    req.session.cart[req.params.id] += 1;
+  }
+  else {
+    req.session.cart[req.params.id] = 1;
+  }
+
+  return res.redirect('/');
+});
+// Add Items to Cart }}}
+
+
+// View Cart & Checkout {{{
+router.get('/cart', function(req, res) {
+  if (!req.session.user_info) {
+    return res.redirect('/signin');
+  }
+  if (!Object.keys(req.session.cart).length) {
+    return res.render('cart');
+  }
+
+  var cart_select_sql = "SELECT * FROM product WHERE id IN (";
+
+  var ids_string = '';
+  Object.keys(req.session.cart).forEach(id => ids_string += id + ',');
+
+  cart_select_sql += ids_string.slice(0,-1) + ')';
+
+  sql_pool.query(cart_select_sql, function (err, result) {
+      if (err) throw err;
+
+    return res.render('cart', {products : result, quantities: req.session.cart});
+  });
+});
+
+
+router.post('/checkout', function(req, res) {
+  if (!req.session.user_info) {
+    return res.redirect('/signin');
+  }
+  if (!Object.keys(req.session.cart).length) {
+    return res.redirect('/');
+  }
+
+  var cart_select_sql = "SELECT * FROM product WHERE id IN (";
+
+  var ids_string = '';
+  Object.keys(req.session.cart).forEach(id => ids_string += id + ',');
+
+  cart_select_sql += ids_string.slice(0,-1) + ')';
+
+  sql_pool.getConnection(function(err, db) {
+    if (err) throw err;
+    db.query(cart_select_sql, function (err, rows) {
+      if (err) throw err;
+
+      var total_cost_cents = 0;
+      rows.forEach(product => total_cost_cents += product.cents_price * req.session.cart[product.id])
+
+      db.query(
+        "INSERT INTO purchase "
+        + "(user_id, total_cents_price) VALUES ("
+          + `'${req.session.user_info.id}', `
+          + `'${total_cost_cents}'`
+        + ')',
+        function(err, result) {
+          if (err) throw err;
+
+          var item_purchase_insert_template = "INSERT INTO item_purchase "
+            + `(purchase_id, product_id, quantity) VALUES (${result.insertId}, ?, ?)`;
+
+          rows.forEach(product =>
+            db.query(
+              mysql.format(
+                item_purchase_insert_template,
+                [product.id, req.session.cart[product.id]]
+              ),
+              function(err) {
+                if (err) throw err;
+              }
+            )
+          );
+
+          req.session.cart = {};
+          res.redirect('/');
+        }
+      );
+
+    });
+  });
+});
+
+
 router.get('/checkout', function(req, res) {
   if (!req.session.user_info) {
     return res.redirect('/signin');
@@ -276,6 +365,7 @@ router.get('/checkout', function(req, res) {
     last_name: req.session.user_info.first_name
   });
 });
+// View Cart & Checkout }}}
 
 // Sign Out {{{
 router.get('/signout', function(req, res) {
@@ -313,7 +403,7 @@ router.post('/signin',
       if (err) throw err;
 
       var credentials_select_sql = "SELECT * FROM credential WHERE "
-        + "username='" + hash_string(req.body.username) + "' and "
+        + "username='" + req.body.username + "' and "
         + "password='" + hash_string(req.body.PASSWORD) + "'";
       db.query(credentials_select_sql, function (err, result) {
         if (err) throw err;
@@ -332,6 +422,7 @@ router.post('/signin',
 
           req.session.user_info.first_name = result[0].first_name;
           req.session.user_info.last_name = result[0].last_name;
+          req.session.cart = {};
           db.release();
 
           res.redirect('/');
