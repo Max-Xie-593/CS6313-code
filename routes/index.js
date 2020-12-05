@@ -125,16 +125,20 @@ router.post('/new/item',
       }
 
 
-      sql_pool.query("INSERT INTO product "
-        + "(name, cents_price, image_path, description) VALUES ("
+      sql_pool.query(
+        "INSERT INTO product "
+        + "(name, cents_price, image_path, description, genre) VALUES ("
           + `'${req.body.item_name}', `
           + `'${req.body.item_price * 100}', `
           + `'${req.body.item_img}', `
-          + `'${req.body.item_description}'`
-        + ')'
-      );
+          + `'${req.body.item_description}', `
+          + `'${req.body.item_genre}'`
+        + ')', function(err) {
+          if (err) throw err;
 
-      return res.redirect('/');
+          return res.redirect('/');
+        }
+      );
     });
   }
 );
