@@ -30,8 +30,8 @@
                     <div class="card-footer text-center d-flex">
                         <!-- ADD Item to CART -->
                         <!-- <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a> -->
-                        <form action="/cart/<%=product.id%>" method="post">
-                            <button type="submit" class="btn btn-primary">
+                        <form action="/cart/<%=product.id%>" method="post" class="w-100 justify-content-center">
+                            <button type="submit" class="btn btn-primary w-100 justify-content-center">
                                 $<%=product.cents_price/100%>
                             </button>
                         </form>
