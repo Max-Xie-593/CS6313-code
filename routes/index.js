@@ -137,6 +137,79 @@ router.post('/new/item',
 );
 // Add New Item to Database }}}
 
+// Edit existing Item in Database {{{
+router.get('/item/:id/edit', function(req, res) {
+  sql_pool.query("SELECT * FROM product WHERE "
+  + "id='" + req.params.id + "'",function(err,product){
+    if (err) throw err;
+    // res.redirect('/');
+    res.render('edit_item',{
+      item: product[0]
+    });
+  });
+});
+
+router.post('/item/:id/',
+  [
+    body("item_name")
+    .not().isEmpty()
+    .trim()
+    .escape(),
+
+    body("item_price")
+    .not().isEmpty()
+    .trim()
+    .escape()
+    .isFloat().toFloat(),
+
+    body("item_img")
+    .not().isEmpty()
+    .trim()
+    .escape(),
+
+    body("item_description")
+    .not().isEmpty()
+    .trim()
+    .escape()
+  ],
+  function(req, res) {
+    if (!req.session.user_info) {
+      return res.redirect('/');
+    }
+
+    if (!validationResult(req).isEmpty()) {
+      return res.render('edit_item', {
+        error_message: "Invalid Input Given!",
+        first_name : req.session.user_info.first_name,
+        last_name: req.session.user_info.first_name,
+        admin : result
+      });
+    }
+
+    is_admin(req.session.user_info.id, function(err, result) {
+      if (err) throw err;
+
+       if (!result) {
+         return res.redirect('/');
+       }
+
+      sql_pool.query("UPDATE product SET " 
+        + "name = " + `'${req.body.item_name}', `
+        + "cents_price = " + `'${req.body.item_price * 100}', `
+        + "image_path = " + `'${req.body.item_img}', `
+        + "description = " + `'${req.body.item_description}' `
+        + "WHERE id = " + "'" + req.params.id + "'"
+      );
+      
+
+      return res.redirect('/');
+    });
+  }
+);
+
+
+// Edit existing Item in Database }}}
+
 router.get('/signin', function(req, res) {
 
   if (req.session.user_info) {

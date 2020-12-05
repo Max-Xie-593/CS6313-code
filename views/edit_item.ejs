@@ -1,0 +1,46 @@
+<%- include ('partials/header') %>
+
+<div class="jumbotron">
+    <h1 class="display-4">Edit Item</h1>
+</div>
+
+<div class="container">
+
+    <% if(typeof error_message !== 'undefined'){ %>
+        <div class="alert alert-danger" role="alert">
+            <%= error_message %>
+        </div>
+    <% } %>
+
+    <form action="/item/<%=item.id%>" method="POST">
+        <div class="form-group">
+            <label>Product Name</label>
+            <input name="item_name" type="text" class="form-control" placeholder="Enter the name of the Product" value="<%=item.name%>">
+        </div>
+
+        <div class="form-group">
+            <label>Product Price</label>
+            <input name="item_price" type="number" step="0.01" class="form-control" placeholder="Enter the price in $" value="<%=item.cents_price / 100%>">
+        </div>
+
+        <div class="form-group">
+            <label>Product Image</label>
+            <input name="item_img" type="text" class="form-control" placeholder="Enter image name" value="<%=item.image_path%>">
+        </div>
+
+
+        <div class="form-group">
+            <label>Product Description</label>
+            <input name="item_description" type="text" class="form-control" placeholder="Enter description" value="<%=item.description%>">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+
+    </form>
+
+    <br>
+
+    <a class="btn btn-warning" href="/">return</a>
+</div>
+
+<%- include ('partials/footer') %>
