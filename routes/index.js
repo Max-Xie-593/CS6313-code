@@ -144,7 +144,7 @@ router.post('/new/item',
 // Edit existing Item in Database {{{
 router.get('/item/:id/edit', function(req, res) {
   sql_pool.query("SELECT * FROM product WHERE "
-  + "id='" + req.params.id + "'",function(err,product){
+  + "id='" + req.params.id + "'", function(err,product) {
     if (err) throw err;
     // res.redirect('/');
     res.render('edit_item',{
