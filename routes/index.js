@@ -156,24 +156,26 @@ router.post('/item/:id/',
   [
     body("item_name")
     .not().isEmpty()
-    .trim()
-    .escape(),
+    .withMessage("Item Name cannot be empty.")
+    .trim(),
 
     body("item_price")
-    .not().isEmpty()
     .trim()
     .escape()
-    .isFloat().toFloat(),
+    .isFloat()
+    .withMessage("Invalid Item Price.")
+    .toFloat(),
 
     body("item_img")
     .not().isEmpty()
+    .withMessage("Item Image Path cannot be empty.")
     .trim()
     .escape(),
 
     body("item_description")
     .not().isEmpty()
+    .withMessage("Item Description cannot be empty.")
     .trim()
-    .escape()
   ],
   function(req, res) {
     if (!req.session.user_info) {
