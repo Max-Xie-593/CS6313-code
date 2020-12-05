@@ -4,6 +4,9 @@ var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+var methodOveride = require('method-override');
+
 var indexRouter = require('./routes/index');
 var databaseRouter = require('./routes/database');
 
@@ -27,6 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(methodOveride('_method'));
 
 // Routes
 app.use('/', indexRouter);

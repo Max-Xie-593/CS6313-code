@@ -35,9 +35,7 @@
                         <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a>
                         <% if(typeof admin !== 'undefined' && admin === true){ %>
                             <!-- Edit item /item/:id/edit -->
-                            <a href="/item/<%= product.id %>/edit" class="btn btn-warning">update</a>
-                            <!-- delete to CART -->
-                            <a href="/new/item" class="btn btn-danger">delete</a>
+                            <a href="/item/<%= product.id %>/edit" class="btn btn-warning">Edit</a>
                         <% } %>
                     </div>
                 </div>

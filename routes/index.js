@@ -140,6 +140,7 @@ router.post('/new/item',
 );
 // Add New Item to Database }}}
 
+
 // Edit existing Item in Database {{{
 router.get('/item/:id/edit', function(req, res) {
   sql_pool.query("SELECT * FROM product WHERE "
@@ -204,14 +205,23 @@ router.post('/item/:id/',
         + "WHERE id = " + "'" + req.params.id + "'"
       );
 
-
       return res.redirect('/');
     });
   }
 );
-
-
 // Edit existing Item in Database }}}
+
+// Delete Item from Database {{{
+router.delete('/item/:id',function(req,res) {
+  sql_pool.query("DELETE FROM product WHERE "
+    + "id = " + "'" + req.params.id + "'",
+    function(err,result){
+      if (err) throw err;
+      res.redirect('/');
+    });
+});
+// Delete Item from Database }}}
+
 
 router.get('/signin', function(req, res) {
 
