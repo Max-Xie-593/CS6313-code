@@ -9,7 +9,15 @@
 
     <% if(typeof error_message !== 'undefined'){ %>
         <div class="alert alert-danger" role="alert">
-            <%= error_message %>
+            <% if(typeof error_message === 'string'){ %>
+                <%= error_message %>
+            <% } else if(Array.isArray(error_message)){ %>
+                <ul>
+                <% error_message.forEach(function(message){ %>
+                    <li><%= message %></li>
+                <% }) %>
+                </ul>
+            <% } %>
         </div>
     <% } %>
 

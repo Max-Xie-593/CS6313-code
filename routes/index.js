@@ -107,9 +107,6 @@ router.post('/new/item',
     }
 
     if (!validationResult(req).isEmpty()) {
-      // TODO: Print out all error messages that come from express-validator in
-      // a list-like form.
-      // console.log(validationResult(req).errors);
       return res.render('newitem', {
         error_message: "Invalid Input Given!",
         first_name : req.session.user_info.first_name,
@@ -206,23 +203,22 @@ router.post('/signin',
   [
     body("username")
     .not().isEmpty()
+    .withMessage("Username cannot be empty.")
     .trim()
     .escape(),
 
     body("PASSWORD")
     .not().isEmpty()
+    .withMessage("Password cannot be empty.")
     .trim()
     .escape()
   ],
   function(req, res) {
 
     if (!validationResult(req).isEmpty()) {
-      // TODO: Print out all error messages that come from express-validator in
-      // a list-like form.
-      // console.log(validationResult(req).errors);
       return res.render('signin', {
-        error_message: "Invalid User/Password Combination!"}
-      );
+        error_message: validationResult(req).errors.map(item => item.msg)
+      });
     }
 
     sql_pool.getConnection(function(err, db) {
@@ -293,9 +289,6 @@ router.post('/signup',
   function(req, res) {
 
     if (!validationResult(req).isEmpty()) {
-      // TODO: Print out all error messages that come from express-validator in
-      // a list-like form.
-      // console.log(validationResult(req).errors);
       return res.render('signup', {
         error_message: "Invalid Information Given!"}
       );
