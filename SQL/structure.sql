@@ -3,19 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 04, 2020 at 11:47 PM
+-- Generation Time: Dec 05, 2020 at 06:19 AM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `boardgame_shop`
@@ -92,16 +86,9 @@ CREATE TABLE `product` (
   `name` text NOT NULL,
   `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'Price in US Cents',
   `image_path` text NOT NULL,
-  `description` text NOT NULL
+  `description` text NOT NULL,
+  `genre` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- MEDIA (MIME) TYPES FOR TABLE `product`:
---   `image_path`
---       `Text_Plain`
---   `description`
---       `Text_Plain`
---
 
 --
 -- RELATIONSHIPS FOR TABLE `product`:
@@ -117,7 +104,8 @@ DROP TABLE IF EXISTS `purchase`;
 CREATE TABLE `purchase` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL,
-  `total_cents_price` int(10) UNSIGNED NOT NULL COMMENT 'Price in US Cents'
+  `total_cents_price` int(10) UNSIGNED NOT NULL COMMENT 'Price in US Cents',
+  `purchase_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -237,7 +225,3 @@ ALTER TABLE `item_purchase`
 ALTER TABLE `purchase`
   ADD CONSTRAINT `purchase_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
