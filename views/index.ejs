@@ -31,9 +31,12 @@
                     <div class="card-body">
                         <h5 class="card-title"><%=product.name%></h5>
                         <p class="card-text"><%=product.description%></p>
+                        <!-- ADD Item to CART -->
                         <a href="/new/item" class="btn btn-primary">$<%=product.cents_price/100%></a>
                         <% if(typeof admin !== 'undefined' && admin === true){ %>
-                            <a href="/new/item" class="btn btn-warning">update</a>
+                            <!-- Edit item /item/:id/edit -->
+                            <a href="/item/<%= product.id %>/edit" class="btn btn-warning">update</a>
+                            <!-- delete to CART -->
                             <a href="/new/item" class="btn btn-danger">delete</a>
                         <% } %>
                     </div>
