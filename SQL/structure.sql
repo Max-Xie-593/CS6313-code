@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 05, 2020 at 10:36 PM
+-- Generation Time: Dec 05, 2020 at 10:42 PM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
@@ -139,6 +139,7 @@ CREATE TABLE `user` (
 -- Indexes for table `admin`
 --
 ALTER TABLE `admin`
+  ADD PRIMARY KEY (`user_id`),
   ADD KEY `user_id` (`user_id`);
 
 --
