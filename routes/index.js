@@ -196,78 +196,11 @@ router.post('/item/:id/',
     body("item_description")
     .not().isEmpty()
     .withMessage("Item Description cannot be empty.")
-    .trim()
-  ],
-  function(req, res) {
-    if (!req.session.user_info) {
-      return res.redirect('/');
-    }
-
-    if (!validationResult(req).isEmpty()) {
-      return res.render('edit_item', {
-        error_message: "Invalid Input Given!",
-        first_name : req.session.user_info.first_name,
-        last_name: req.session.user_info.first_name,
-        admin : result
-      });
-    }
-
-    is_admin(req.session.user_info.id, function(err, result) {
-      if (err) throw err;
-
-       if (!result) {
-         return res.redirect('/');
-       }
-
-      sql_pool.query("UPDATE product SET "
-        + "name = " + `'${req.body.item_name}', `
-        + "cents_price = " + `'${req.body.item_price * 100}', `
-        + "image_path = " + `'${req.body.item_img}', `
-        + "description = " + `'${req.body.item_description}' `
-        + "WHERE id = " + "'" + req.params.id + "'"
-      );
-
-      return res.redirect('/');
-    });
-  }
-);
-// Edit existing Item in Database }}}
-
-// Delete Item from Database {{{
-router.delete('/item/:id',function(req,res) {
-  sql_pool.query("DELETE FROM product WHERE "
-    + "id = " + "'" + req.params.id + "'",
-    function(err,result){
-      if (err) throw err;
-      res.redirect('/');
-    });
-});
-// Delete Item from Database }}}
-
-
-router.post('/item/:id/',
-  [
-    body("item_name")
-    .not().isEmpty()
-    .withMessage("Item Name cannot be empty.")
     .trim(),
 
-    body("item_price")
-    .trim()
-    .escape()
-    .isFloat()
-    .withMessage("Invalid Item Price.")
-    .toFloat(),
-
-    body("item_img")
+    body("item_genre")
     .not().isEmpty()
-    .withMessage("Item Image Path cannot be empty.")
-    .trim()
-    .escape(),
-
-    body("item_description")
-    .not().isEmpty()
-    .withMessage("Item Description cannot be empty.")
+    .withMessage("Item genre cannot be empty.")
     .trim()
   ],
   function(req, res) {
@@ -295,7 +228,8 @@ router.post('/item/:id/',
         + "name = " + `'${req.body.item_name}', `
         + "cents_price = " + `'${req.body.item_price * 100}', `
         + "image_path = " + `'${req.body.item_img}', `
-        + "description = " + `'${req.body.item_description}' `
+        + "description = " + `'${req.body.item_description}', `
+        + "genre = " + `'${req.body.item_genre}' `
         + "WHERE id = " + "'" + req.params.id + "'"
       );
 
@@ -315,7 +249,6 @@ router.delete('/item/:id',function(req,res) {
     });
 });
 // Delete Item from Database }}}
-
 
 router.get('/signin', function(req, res) {
 
