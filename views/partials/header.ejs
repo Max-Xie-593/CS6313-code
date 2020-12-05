@@ -23,11 +23,11 @@
             <!-- Toggle Nav Bar (opens if page is too small) -->
             <div class="collapse navbar-collapse" id="navbar">
               <!-- Search Bar -->
-              <form class="mx-2 my-auto d-inline w-100">
+              <form class="mx-2 my-auto d-inline w-100" action="/" method="GET">
                 <div class="input-group">
-                    <input type="text" class="form-control border border-right-0" placeholder="Search...">
+                    <input name="search" type="text" class="form-control border border-right-0" placeholder="Search..." <% if (typeof search !=='undefined'){ %>value="<%= search %>"<% } %> >
                     <span class="input-group-append">
-                        <button class="btn btn-outline-secondary border border-left-0" type="button">
+                        <button class="btn btn-outline-secondary border border-left-0" type="submit">
                             <i class="fa fa-search"></i>
                         </button>
                     </span>
