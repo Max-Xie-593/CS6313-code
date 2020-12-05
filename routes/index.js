@@ -71,6 +71,31 @@ router.get('/', function(req, res) {
 /* GET new Item Page. */
 router.get('/new/item', function(req, res) {
 
+  sql_pool.getConnection(function(err, db) {
+    if (err) throw err;
+
+    var credentials_select_sql = "SELECT * FROM product";
+    db.query(credentials_select_sql, function (err, result) {
+      if (err) throw err;
+      db.release();
+      if (!req.session.user_info) {
+        return res.render('index', {products : result});
+      }
+      is_admin(req.session.user_info.id, function(err, isadmin) {
+        if (err) throw err;
+        res.render('index', {
+          first_name : req.session.user_info.first_name,
+          last_name: req.session.user_info.first_name,
+          admin : isadmin,
+          products : result
+        });
+      });
+    });
+  });
+});
+/* GET new Item Page. */
+router.get('/new/item', function(req, res) {
+
   if (!req.session.user_info) {
     return res.redirect('/');
   }
@@ -166,6 +191,8 @@ router.get('/item/:id/edit', function(req, res) {
     });
   });
 });
+// Delete Item from Database }}}
+
 
 router.post('/item/:id/',
   [
