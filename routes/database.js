@@ -1,14 +1,13 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-var mysql = require('mysql');
+var mysql = require("mysql");
 var db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "root",
-  database: "boardgame_shop"
+  database: "boardgame_shop",
 });
-
 
 // Example of a SELECT request {{{
 // db.connect(function(err) {
@@ -43,7 +42,5 @@ var db = mysql.createConnection({
 //         res.json(video);
 //     });
 // });
-
-
 
 module.exports = router;
