@@ -1,9 +1,12 @@
-<%- include('partials/header') %> <div class="jumbotron">
+<%- include('partials/header') %> 
+<div class="jumbotron" style="margin-bottom:0">
     <h1 class="display-4">This is the purchase history!</h1>
-</div>
-
-
-<div class="container">
+    <% if(typeof purchase_date !== 'undefined'){ %>
+    <p class="card-text">Order Date: <%=purchase_date%></p>
+    <% } %>
+    <% if(typeof order_total_cost_cents !== 'undefined'){ %>
+    <h3 class="card-text">Total Price: $<%= (order_total_cost_cents/100).toFixed(2) %></h5>
+    <% } %>
     <% if(typeof error_message !== 'undefined'){ %>
         <div class="alert alert-danger" role="alert">
             <% if(typeof error_message === 'string'){ %>
@@ -16,34 +19,48 @@
                 </ul>
             <% } %>
         </div>
-    <% } else if(typeof order_items !== 'undefined'){ %>
-        <% if(order_index > 0){ %>
-            <a class="btn btn-primary" href="/history/<%=order_index - 1%>">See Next Newest Order</a>
+    <% } %>
+    <a class="btn btn-warning" href="/">Home</a>
+</div>
+
+
+<div class="row justify-content-between no-gutters">
+    <div id="sidebarMenu" class="bg-second col-1 d-md-block sidebar collapse bg-second" style="background-color:rgb(240, 240, 240)">
+        <% if(typeof order_index !== 'undefined' && order_index > 0){ %>
+            <a class="btn btn-primary" href="/history/<%=order_index - 1%>">See More Recent Order</a>
         <% } %>
+    </div>
+    <main class="col-10">
+        <div class="row col-md-12">
+            <% if(typeof order_items !== 'undefined'){ %>
+        
+                <% order_items.forEach(function(item_purchase) { %>
+                    <div class="col-sm-auto">
+                        <div class="card h-100" style="width: 18rem;">
+                            <img class="card-img-top" src="/images/<%=item_purchase.image_path%>" alt="Product Image">
+                            <div class="card-body">
+                                <h5 class="card-title"><%=item_purchase.name%></h5>
+                                <p class="card-text"><%=item_purchase.description%></p>
+                            </div>
+                            <div class="card-footer text-center d-flex">
+                                Genre: <%=item_purchase.genre%>
+                            </div>
+                            <div class="card-footer text-center d-flex">
+                                <button class="btn btn-info w-100 justify-content-center" style="pointer-events: none">$<%=(item_purchase.cents_price/100).toFixed(2)%></button>
+                                <button class="btn btn-success w-100 justify-content-center" style="pointer-events: none"><b>x<%=item_purchase.quantity%></b></button>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
 
-        <p class="card-text">Order Date: <%=purchase_date%></p>
-        <p class="card-text">Total Price: $<%= (order_total_cost_cents/100).toFixed(2) %></p>
-
-        <% order_items.forEach(function(item_purchase) { %>
-            <div class="card h-100" style="width: 18rem;">
-                <img class="card-img-top" src="/images/<%=item_purchase.image_path%>" alt="Product Image">
-                <div class="card-body">
-                    <h5 class="card-title"><%=item_purchase.name%></h5>
-                    <p class="card-text"><%=item_purchase.description%></p>
-                    <p class="card-text"><%=item_purchase.genre%></p>
-                    <p class="card-text">Price paid for each item: $<%=(item_purchase.cents_price/100).toFixed(2)%></p>
-                    <p class="card-text">Quantity: <%=item_purchase.quantity%></p>
-                </div>
-            </div>
-        <% }); %>
-
-        <% if(order_index < total_orders_count - 1){ %>
+            <% } %>
+        </div>
+    </main>
+    <div id="sidebarMenu2" class="bg-second col-1 d-md-block sidebar collapse bg-second justify-content-end" style="background-color:rgb(240, 240, 240)">
+        <% if(typeof order_index !== 'undefined' && order_index < total_orders_count - 1){ %>
             <a class="btn btn-primary" href="/history/<%=order_index + 1%>">See Next Oldest Order</a>
         <% } %>
-    <% } %>
-
-
-    <a class="btn btn-warning" href="/">Home</a>
+    </div>
 </div>
 
 <%- include('partials/footer') %>
