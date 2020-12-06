@@ -16,10 +16,15 @@
                         <p class="card-text"><%=product.description%></p>
                         <p class="card-text">Quantity: <%=quantities[product.id]%></p>
                     </div>
-                </div>
+                <% if(quantities[product.id] > 0){ %>
+                    <form action="/cart/<%=product.id%>/?_method=DELETE" method="post">
+                        <button type="submit" class="btn btn-danger">
+                            Reduce Quantity by 1
+                        </button>
+                    </form>
+                <% } %>
             </div>
         <% }); %>
-
         <button class="btn btn-primary">
             Total Cost: $<%= (total_cost_cents/100).toFixed(2)%>
         </button>

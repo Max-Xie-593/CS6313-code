@@ -31,6 +31,7 @@
                     <h5 class="card-title"><%=item_purchase.name%></h5>
                     <p class="card-text"><%=item_purchase.description%></p>
                     <p class="card-text"><%=item_purchase.genre%></p>
+                    <p class="card-text">Price paid for each item: $<%=(item_purchase.cents_price/100).toFixed(2)%></p>
                     <p class="card-text">Quantity: <%=item_purchase.quantity%></p>
                 </div>
             </div>
