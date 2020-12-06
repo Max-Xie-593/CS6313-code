@@ -30,35 +30,26 @@ function is_admin(user_id, callback) {
 
 /* GET home page. */
 router.get("/", function (req, res) {
-  var credentials_select_sql = "SELECT * FROM product";
+  var credentials_select_sql = "SELECT * FROM product WHERE is_deleted = '0'";
   var pageNum;
   var itemsPerPage;
   if (
     req.query.search != null &&
-    typeof req.query.search !== "undefined" &&
+    typeof req.query.search !== "undefined"
+  ) {
+    credentials_select_sql =
+      credentials_select_sql + " AND name LIKE '%" + req.query.search + "%'";
+  } 
+  
+  if (
     req.query.genre != null &&
     typeof req.query.genre !== "undefined" &&
     req.query.genre != "all"
   ) {
     credentials_select_sql =
-      credentials_select_sql + " WHERE name LIKE '%" + req.query.search + "%'";
-    credentials_select_sql = credentials_select_sql + " AND";
-    credentials_select_sql =
-      credentials_select_sql + " genre LIKE '%" + req.query.genre + "%'";
-  } else if (
-    req.query.search != null &&
-    typeof req.query.search !== "undefined"
-  ) {
-    credentials_select_sql =
-      credentials_select_sql + " WHERE name LIKE '%" + req.query.search + "%'";
-  } else if (
-    req.query.genre != null &&
-    typeof req.query.genre !== "undefined" &&
-    req.query.genre != "none"
-  ) {
-    credentials_select_sql =
-      credentials_select_sql + " WHERE genre LIKE '%" + req.query.genre + "%'";
+      credentials_select_sql + " AND genre LIKE '%" + req.query.genre + "%'";
   }
+
   if(
     req.query.page_number != null &&
     typeof req.query.page_number !== "undefined" && 
@@ -297,7 +288,8 @@ router.post(
 // Delete Item from Database {{{
 router.delete("/item/:id", function (req, res) {
   sql_pool.query(
-    "DELETE FROM product WHERE " + "id = " + "'" + req.params.id + "'",
+    "UPDATE product SET is_deleted = 1 WHERE product.id = " + "'" + req.params.id + "'",
+    //"DELETE FROM product WHERE " + "id = " + "'" + req.params.id + "'",
     function (err) {
       if (err) throw err;
       res.redirect("/");
