@@ -76,7 +76,7 @@ CREATE TABLE `product` (
   `image_path` text NOT NULL,
   `description` text NOT NULL,
   `genre` varchar(20) NOT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT '0'
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
