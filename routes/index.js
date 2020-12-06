@@ -31,6 +31,8 @@ function is_admin(user_id, callback) {
 /* GET home page. */
 router.get("/", function (req, res) {
   var credentials_select_sql = "SELECT * FROM product";
+  var pageNum;
+  var itemsPerPage;
   if (
     req.query.search != null &&
     typeof req.query.search !== "undefined" &&
@@ -65,9 +67,13 @@ router.get("/", function (req, res) {
     typeof req.query.items_per_page !== "undefined" &&
     req.query.items_per_page > 0
   ) {
-    credentials_select_sql =
-      credentials_select_sql + ` LIMIT ${req.query.page_number*req.query.items_per_page}, ${req.query.items_per_page}`;
+    pageNum = req.query.page_number
+    itemsPerPage = req.query.items_per_page;
+  } else {
+    pageNum = 0;
+    itemsPerPage = 10;
   }
+  credentials_select_sql = credentials_select_sql + ` LIMIT ${pageNum*itemsPerPage}, ${itemsPerPage}`;
   // Add genre search
   // console.log("MYSQL Search: " + credentials_select_sql);
   console.log("page number: " + req.query.page_number + " Per Page:" + req.query.items_per_page);
@@ -81,8 +87,8 @@ router.get("/", function (req, res) {
           products: result,
           search: req.query.search,
           genre: req.query.genre,
-          items_per_page: req.query.items_per_page,
-          page_number: req.query.page_number
+          items_per_page: itemsPerPage,
+          page_number: pageNum
         });
       }
       is_admin(req.session.user_info.id, function (err, isadmin) {
@@ -95,8 +101,8 @@ router.get("/", function (req, res) {
           products: result,
           search: req.query.search,
           genre: req.query.genre,
-          items_per_page: req.query.items_per_page,
-          page_number: req.query.page_number
+          items_per_page: itemsPerPage,
+          page_number: pageNum
         });
       });
     });
