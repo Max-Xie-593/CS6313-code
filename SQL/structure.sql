@@ -1,15 +1,22 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.5
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Dec 06, 2020 at 07:21 AM
--- Server version: 10.4.16-MariaDB
--- PHP Version: 7.4.12
+-- Host: localhost:3306
+-- Generation Time: Dec 06, 2020 at 09:58 PM
+-- Server version: 5.7.24
+-- PHP Version: 7.4.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `boardgame_shop`
@@ -28,12 +35,6 @@ CREATE TABLE `admin` (
   `user_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONSHIPS FOR TABLE `admin`:
---   `user_id`
---       `user` -> `id`
---
-
 -- --------------------------------------------------------
 
 --
@@ -47,12 +48,6 @@ CREATE TABLE `credential` (
   `PASSWORD` varchar(128) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONSHIPS FOR TABLE `credential`:
---   `user_id`
---       `user` -> `id`
---
-
 -- --------------------------------------------------------
 
 --
@@ -63,17 +58,9 @@ DROP TABLE IF EXISTS `item_purchase`;
 CREATE TABLE `item_purchase` (
   `product_id` int(10) UNSIGNED NOT NULL,
   `purchase_id` int(10) UNSIGNED NOT NULL,
-  `quantity` int(10) UNSIGNED NOT NULL CHECK (`quantity` > 0),
+  `quantity` int(10) UNSIGNED NOT NULL,
   `cents_price` int(10) UNSIGNED NOT NULL COMMENT 'The price in US cents for each item when the item was purchased.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONSHIPS FOR TABLE `item_purchase`:
---   `product_id`
---       `product` -> `id`
---   `purchase_id`
---       `purchase` -> `id`
---
 
 -- --------------------------------------------------------
 
@@ -92,10 +79,6 @@ CREATE TABLE `product` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- RELATIONSHIPS FOR TABLE `product`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -106,14 +89,8 @@ DROP TABLE IF EXISTS `purchase`;
 CREATE TABLE `purchase` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL,
-  `purchase_date` datetime NOT NULL DEFAULT current_timestamp()
+  `purchase_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONSHIPS FOR TABLE `purchase`:
---   `user_id`
---       `user` -> `id`
---
 
 -- --------------------------------------------------------
 
@@ -127,10 +104,6 @@ CREATE TABLE `user` (
   `first_name` varchar(10) NOT NULL,
   `last_name` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONSHIPS FOR TABLE `user`:
---
 
 --
 -- Indexes for dumped tables
@@ -227,3 +200,7 @@ ALTER TABLE `item_purchase`
 ALTER TABLE `purchase`
   ADD CONSTRAINT `purchase_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
