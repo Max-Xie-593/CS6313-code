@@ -8,23 +8,17 @@ npm install -g express-generator
 
 express Vidzy
 
-# Install nodemon Monk & ejs (monk and ejs should be installed with npm install)
+# Install nodemon & ejs (ejs should be installed with npm install)
 
-npm install
-npm install nodemon -g
-npm install monk --save np
-npm install ejs -g
+- npm install
+- npm install nodemon -g
+- npm install ejs -g
 
-# to run/test
+# Uitilize MYSQL with MAMP
 
-run mongod --dbpath ~/data/db
+- Run /SQL/boardgame_shop.sql in MYSQL for a filled in DB
+- Run structure.sql in MYSQL for an empty DB
 
-# or
-
-# cd to mongod path
-
-.\mongod
-
-# in serperate terminal run
+# in terminal run
 
 nodemon
