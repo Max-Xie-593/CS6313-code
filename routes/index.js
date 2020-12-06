@@ -372,7 +372,7 @@ router.get("/history/:index", function (req, res) {
   });
 });
 
-// Add Items to Cart {{{
+// Add, Edit and Remove Item in Cart {{{
 router.post("/cart/:id", function (req, res) {
   if (!req.session.user_info) {
     return res.redirect("/signin");
@@ -385,6 +385,23 @@ router.post("/cart/:id", function (req, res) {
   }
 
   return res.redirect("/");
+});
+
+router.delete("/cart/:id", function (req, res) {
+  if (!req.session.user_info) {
+    return res.redirect("/signin");
+  }
+
+  if (req.params.id in req.session.cart) {
+    req.session.cart[req.params.id] -= 1;
+  }
+
+  if (req.session.cart[req.params.id] === 0) {
+    delete req.session.cart[req.params.id];
+  }
+  console.log(req.session.cart);
+
+  return res.redirect("/cart");
 });
 // Add Items to Cart }}}
 
