@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 05, 2020 at 10:59 PM
+-- Generation Time: Dec 06, 2020 at 07:21 AM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 7.4.12
 
@@ -88,7 +88,8 @@ CREATE TABLE `product` (
   `cents_price` int(11) UNSIGNED NOT NULL COMMENT 'The current price of the item in US cents.',
   `image_path` text NOT NULL,
   `description` text NOT NULL,
-  `genre` varchar(20) NOT NULL
+  `genre` varchar(20) NOT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
