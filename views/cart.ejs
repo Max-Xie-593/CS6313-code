@@ -1,44 +1,65 @@
 <%- include('partials/header') %>
 
-<div class="jumbotron">
+<div class="jumbotron" style="margin-bottom:0; padding-top: 20px; padding-bottom: 30px">
     <h1 class="display-4">Cart</h1>
-</div>
-
-
-<div class="container">
-    <% if(typeof products !== 'undefined'){ %>
-        <% products.forEach(function(product) { %>
-            <div class="col-sm-auto">
-                <div class="card h-100" style="width: 18rem;">
-                    <img class="card-img-top" src="/images/<%=product.image_path%>" alt="New Item">
-                    <div class="card-body">
-                        <h5 class="card-title"><%=product.name%></h5>
-                        <p class="card-text"><%=product.description%></p>
-                        <p class="card-text">Quantity: <%=quantities[product.id]%></p>
-                    </div>
-                <% if(quantities[product.id] > 0){ %>
-                    <form action="/cart/<%=product.id%>/?_method=DELETE" method="post">
-                        <button type="submit" class="btn btn-danger">
-                            Reduce Quantity by 1
-                        </button>
-                    </form>
-                <% } %>
-            </div>
-        <% }); %>
-        <button class="btn btn-primary">
-            Total Cost: $<%= (total_cost_cents/100).toFixed(2)%>
-        </button>
-
-        <form action="/checkout/" method="post">
-            <button type="submit" class="btn btn-primary">
-                Checkout
-            </button>
-        </form>
-    <% } else { %>
+    <% if(typeof products === 'undefined'){ %>
         <div class="alert alert-warning" role="alert">
             No items in the cart!
         </div>
     <% } %>
+    <% if(typeof total_cost_cents !== 'undefined'){ %>
+        <h3 class="card-text">Total Cost: $<%= (total_cost_cents/100).toFixed(2)%></h5>
+    <% } %>
 </div>
 
+<div class="row justify-content-between no-gutters">
+    <div id="sidebarMenu" class="bg-second col-1 d-md-block sidebar collapse bg-second" style="background-color:rgb(240, 240, 240)"></div>
+    <main class="col-10">
+        <div class="row col-md-12">
+            <% if(typeof products !== 'undefined'){ %>
+                <% products.forEach(function(product) { %>
+                    <div class="col-sm-auto">
+                        <div class="card h-100" style="width: 18rem;">
+                            <img class="card-img-top" src="/images/<%=product.image_path%>" alt="New Item">
+                            <div class="card-body">
+                                <h5 class="card-title"><%=product.name%></h5>
+                                <p class="card-text"><%=product.description%></p>
+                            </div>
+                            <div class="card-footer text-center d-flex">
+                                Item Price: $<%= (product.cents_price*quantities[product.id]/100).toFixed(2)%>
+                            </div>
+                            <div class="card-footer text-center d-flex">
+                                <% if(quantities[product.id] > 0){ %>
+                                    <form action="/cart/<%=product.id%>/?_method=DELETE" method="post" class="w-100 justify-content-center">
+                                        <button type="submit" class="btn btn-danger w-100 justify-content-center">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </form>
+                                <% } %>
+                                <button type="submit" class="btn btn-danger w-100 justify-content-center" style="pointer-events: none">
+                                    <b>x<%=quantities[product.id]%></b>
+                                </button>
+                                <form action="/cart/stay/<%=product.id%>" method="post" class="w-100 justify-content-center">
+                                    <button type="submit" class="btn btn-danger w-100 justify-content-center">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+                <div class="col-sm-auto">
+                    <div class="card h-100" style="width: 18rem;">
+                        <form action="/checkout/" method="post" class="h-100 w-100 justify-content-center">
+                            <button type="submit" class="btn btn-primary h-100 w-100 justify-content-center">
+                                <h1><b>Checkout</b></h1>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+    <div id="sidebarMenu2" class="bg-second col-1 d-md-block sidebar collapse bg-second justify-content-end" style="background-color:rgb(240, 240, 240)"></div>
+</div>
 <%- include('partials/footer') %>

@@ -74,9 +74,7 @@ router.get("/", function (req, res) {
     itemsPerPage = 10;
   }
   credentials_select_sql = credentials_select_sql + ` LIMIT ${pageNum*itemsPerPage}, ${itemsPerPage}`;
-  // Add genre search
-  // console.log("MYSQL Search: " + credentials_select_sql);
-  console.log("page number: " + req.query.page_number + " Per Page:" + req.query.items_per_page);
+  
   sql_pool.getConnection(function (err, db) {
     if (err) throw err;
     db.query(credentials_select_sql, function (err, result) {
@@ -324,7 +322,7 @@ router.get("/signup", function (req, res) {
   res.render("signup");
 });
 
-router.get("/history", function (_req, res) {
+router.get("/history", function (req, res) {
   return res.redirect("/history/0");
 });
 
@@ -387,7 +385,7 @@ router.get("/history/:index", function (req, res) {
           total_orders_count: req.session.user_info.num_orders,
           purchase_date: order[0].purchase_date,
           order_total_cost_cents: Number(total_cost_cents),
-          order_items: order_items,
+          order_items: order_items
         });
       });
     });
@@ -408,6 +406,21 @@ router.post("/cart/:id", function (req, res) {
 
   return res.redirect("/");
 });
+
+// Add, Cart {{{
+  router.post("/cart/stay/:id", function (req, res) {
+    if (!req.session.user_info) {
+      return res.redirect("/signin");
+    }
+  
+    if (req.params.id in req.session.cart) {
+      req.session.cart[req.params.id] += 1;
+    } else {
+      req.session.cart[req.params.id] = 1;
+    }
+  
+    return res.redirect("/cart");
+  });
 
 router.delete("/cart/:id", function (req, res) {
   if (!req.session.user_info) {
