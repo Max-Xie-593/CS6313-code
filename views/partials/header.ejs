@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Table Top Games</title>
+        <title>The Table Top Store</title>
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -9,15 +9,23 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <!-- FontAwesome icons -->
         <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-        <% if (typeof genre !=='undefined'){ %>
-        <script>$(document).ready(function(){document.getElementById("Genre").value="<%= genre %>";});</script>
-        <% } %>
+        <script>$(document).ready(function(){
+          <% if (typeof genre !=='undefined'){ %>
+          document.getElementById("Genre").value="<%= genre %>";
+          <% } %>
+          <% if (typeof items_per_page !=='undefined'){ %>
+          document.getElementById("Items_per_page").value="<%= items_per_page %>";
+          <% } %>
+          <% if (typeof page_number !=='undefined'){ %>
+          document.getElementById("PageN").value="<%= page_number %>";
+          <% } %>
+          });</script>
     </head>
     <body>
 
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <!-- Name Of Company -->
-            <a class="navbar-brand" href="/">Table Top Games</a>
+            <a class="navbar-brand" href="/">The Table Top Store</a>
             <!-- Toggle Nav Bar (opens if page is too small) -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -30,13 +38,26 @@
                 <div class="input-group form-row">
                     <input name="search" type="text" class="col-11 form-control border border-right-0" placeholder="Search..." <% if (typeof search !=='undefined'){ %>value="<%= search %>"<% } %> >
                     <div class="input-group-prepend">
-                      <label class="input-group-text" for="inputGroupSelect01">Genres</label>
+                      <label class="input-group-text" for="Genre">Genres</label>
                     </div>
                     <select class="custom-select col-1" name="genre" id="Genre" >
                       <option value="all">All</option>
                       <option value="family">Family</option>
                       <option value="roleplay">Roleplay</option>
                       <option value="strategy">Strategy</option>
+                    </select>
+                    <div class="input-group-prepend">
+                      <label class="input-group-text" for="PageN">Page #</label>
+                    </div>
+                    <input name="page_number" id="PageN" type="number" step="1" min="0" class="form-control col-1" placeholder="Page" value="0">
+                    <div class="input-group-prepend">
+                      <label class="input-group-text" for="Items_per_page">Items/Page</label>
+                    </div>
+                    <select class="custom-select col-1" name="items_per_page" id="Items_per_page" >
+                      <option value="4">4</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
                     </select>
                     <span class="input-group-append">
                         <button class="btn btn-outline-secondary border border-left-0" type="submit">

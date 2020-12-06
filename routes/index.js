@@ -57,8 +57,20 @@ router.get("/", function (req, res) {
     credentials_select_sql =
       credentials_select_sql + " WHERE genre LIKE '%" + req.query.genre + "%'";
   }
+  if(
+    req.query.page_number != null &&
+    typeof req.query.page_number !== "undefined" && 
+    req.query.page_number >= 0 &&
+    req.query.items_per_page != null &&
+    typeof req.query.items_per_page !== "undefined" &&
+    req.query.items_per_page > 0
+  ) {
+    credentials_select_sql =
+      credentials_select_sql + ` LIMIT ${req.query.page_number*req.query.items_per_page}, ${req.query.items_per_page}`;
+  }
   // Add genre search
   // console.log("MYSQL Search: " + credentials_select_sql);
+  console.log("page number: " + req.query.page_number + " Per Page:" + req.query.items_per_page);
   sql_pool.getConnection(function (err, db) {
     if (err) throw err;
     db.query(credentials_select_sql, function (err, result) {
@@ -69,6 +81,8 @@ router.get("/", function (req, res) {
           products: result,
           search: req.query.search,
           genre: req.query.genre,
+          items_per_page: req.query.items_per_page,
+          page_number: req.query.page_number
         });
       }
       is_admin(req.session.user_info.id, function (err, isadmin) {
@@ -81,6 +95,8 @@ router.get("/", function (req, res) {
           products: result,
           search: req.query.search,
           genre: req.query.genre,
+          items_per_page: req.query.items_per_page,
+          page_number: req.query.page_number
         });
       });
     });
@@ -163,7 +179,7 @@ router.post(
         "INSERT INTO product " +
           "(name, cents_price, image_path, description, genre) VALUES (" +
           `'${req.body.item_name}', ` +
-          `'${req.body.item_price * 100}', ` +
+          `'${(req.body.item_price * 100).toFixed(0)}', ` +
           `'${req.body.item_img}', ` +
           `'${req.body.item_description}', ` +
           `'${req.body.item_genre}'` +
@@ -255,7 +271,7 @@ router.post(
           "name = " +
           `'${req.body.item_name}', ` +
           "cents_price = " +
-          `'${req.body.item_price * 100}', ` +
+          `'${(req.body.item_price * 100).toFixed(0)}', ` +
           "image_path = " +
           `'${req.body.item_img}', ` +
           "description = " +
