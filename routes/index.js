@@ -187,6 +187,7 @@ router.get("/item/:id/edit", function (req, res) {
       if (err) throw err;
       // res.redirect('/');
       res.render("edit_item", {
+        first_name: req.session.user_info.first_name,
         item: product[0],
       });
     }
@@ -301,7 +302,7 @@ router.get("/signup", function (req, res) {
   res.render("signup");
 });
 
-router.get("/history", function (req, res) {
+router.get("/history", function (_req, res) {
   return res.redirect("/history/0");
 });
 
@@ -359,6 +360,7 @@ router.get("/history/:index", function (req, res) {
         );
 
         return res.render("history", {
+          first_name: req.session.user_info.first_name,
           order_index: Number(req.params.index),
           total_orders_count: req.session.user_info.num_orders,
           purchase_date: order[0].purchase_date,
@@ -392,7 +394,9 @@ router.get("/cart", function (req, res) {
     return res.redirect("/signin");
   }
   if (!Object.keys(req.session.cart).length) {
-    return res.render("cart");
+    return res.render("cart", {
+      first_name: req.session.user_info.first_name,
+    });
   }
 
   var cart_select_sql = "SELECT * FROM product WHERE id IN (";
@@ -412,6 +416,7 @@ router.get("/cart", function (req, res) {
     );
 
     return res.render("cart", {
+      first_name: req.session.user_info.first_name,
       products: products,
       quantities: req.session.cart,
       total_cost_cents: total_cost_cents,
