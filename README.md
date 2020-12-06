@@ -4,10 +4,6 @@
 
 npm install -g express-generator
 
-# To Create the Folder I used (do not repeat)
-
-express Vidzy
-
 # Install nodemon & ejs (ejs should be installed with npm install)
 
 - npm install
